@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<h1 class="text-xl font-bold mb-4">Crear Consentimiento</h1>
+
+<form action="/generar" method="POST" class="space-y-4" enctype="multipart/form-data">
+
+    <!-- PLANTILLA -->
+    <div>
+        <label class="font-semibold">Plantilla</label>
+        <select name="plantilla" class="border p-2 rounded w-full">
+            <option value="">Seleccione plantilla...</option>
+
+                {% for p in plantillas %}
+        <option value="{{ p }}">{{ p }}</option>
+                {% endfor %}
+        </select>
+    </div>
+
+    <hr>
+
+    <!-- PACIENTE -->
+    <h2 class="font-bold">Datos del Paciente</h2>
+
+    <input name="paciente" placeholder="Nombre del paciente" class="border p-2 rounded w-full">
+    <input name="cedula_paciente" placeholder="Cédula" class="border p-2 rounded w-full">
+    <label>Firma (imagen)</label>
+    <input type="file" name="firma_paciente" accept="image/*">
+
+    <input name="lugar_expedicion_paciente" placeholder="Lugar de expedición" class="border p-2 rounded w-full">
+
+    <label class="flex items-center mt-2">
+        <input type="checkbox" id="menor_checkbox" class="mr-2">
+        <span>¿Es menor de edad?</span>
+    </label>
+
+    <!-- FORMULARIO DINÁMICO -->
+    <div id="menor_container" class="hidden mt-4">
+
+        <h2 class="font-bold text-red-600">Datos del Menor</h2>
+
+        <input name="menor_edad" placeholder="Nombre del menor" class="border p-2 rounded w-full">
+        <input name="cedula_menor" placeholder="Cédula del menor (si aplica)" class="border p-2 rounded w-full">
+        <input type="file" name="firma_menor" accept="image/*">
+        <input name="lugar_expedicion_menor" placeholder="Lugar expedición del menor" class="border p-2 rounded w-full">
+
+        <h2 class="font-bold mt-4">Datos del Acudiente</h2>
+
+        <input name="acudiente_nombre" placeholder="Nombre del acudiente" class="border p-2 rounded w-full">
+        <input name="cedula_acudiente" placeholder="Cédula del acudiente" class="border p-2 rounded w-full">
+        <input name="parentesco_acudiente" placeholder="Parentesco" class="border p-2 rounded w-full">
+        <input type="file" name="firma_acudiente" accept="image/*">
+        <input name="lugar_expedicion_acudiente" placeholder="Lugar expedición" class="border p-2 rounded w-full">
+
+    </div>
+
+    <hr>
+
+    <!-- DOCTOR -->
+    <h2 class="font-bold">Doctor</h2>
+    <select name="doctor" class="border p-2 rounded w-full">
+        {% for d in medicos %}
+            <option value="{{ d.nombre }}">{{ d.nombre }} - {{ d.cedula }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- ENFERMERO -->
+    <h2 class="font-bold">Enfermero</h2>
+    <select name="enfermero" class="border p-2 rounded w-full">
+        {% for e in enfermeros %}
+            <option value="{{ e.nombre }}">{{ e.nombre }} - {{ e.cedula }}</option>
+        {% endfor %}
+    </select>
+
+    <button class="bg-green-600 text-white px-4 py-2 rounded">
+        Generar documento
+    </button>
+     <a class="bg-blue-600 text-white ml-4 px-4 py-2 rounded" href="/">
+        Volver al inicio
+     </a>
+
+</form>
+
+<script>
+document.getElementById("menor_checkbox").addEventListener("change", function() {
+    let container = document.getElementById("menor_container");
+    container.classList.toggle("hidden", !this.checked);
+});
+</script>
+
+{% endblock %}

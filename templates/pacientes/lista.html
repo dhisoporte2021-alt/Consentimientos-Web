@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+
+    <div class="flex justify-between mb-4">
+        <h1 class="text-2xl font-bold">Pacientes</h1>
+
+        <a href="/pacientes/agregar"
+           class="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+            + Agregar
+        </a>
+    </div>
+
+    <table class="w-full border">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="p-2 border">ID</th>
+                <th class="p-2 border">Nombre</th>
+                <th class="p-2 border">Cédula</th>
+                <th class="p-2 border">Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for p in pacientes %}
+            <tr>
+                <td class="border p-2">{{ p.id }}</td>
+                <td class="border p-2">{{ p.nombre }}</td>
+                <td class="border p-2">{{ p.cedula }}</td>
+                <td class="border p-2">
+                    <a href="/pacientes/editar/{{ p.id }}" class="text-blue-600">Editar</a> |
+                    <a href="/pacientes/eliminar/{{ p.id }}"
+                       class="text-red-600"
+                       onclick="return confirm('¿Eliminar paciente?')">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

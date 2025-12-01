@@ -1,0 +1,16 @@
+<h1>Agregar personal</h1>
+
+<form method="POST">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" required>
+
+    <label>Tipo:</label>
+    <select name="tipo">
+        <option value="medico">Médico</option>
+        <option value="enfermero">Enfermero</option>
+    </select>
+
+    <button type="submit">Guardar</button>
+</form>
+
+<a href="{{ url_for('personal_lista') }}">Volver</a>

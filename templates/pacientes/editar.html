@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+
+    <h1 class="text-2xl font-bold mb-4">Editar Paciente</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="grid gap-4">
+
+        <div>
+            <label>Cédula</label>
+            <input name="cedula" value="{{ paciente.cedula }}" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label>Nombre Completo</label>
+            <input name="nombre" value="{{ paciente.nombre }}" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label>Lugar de Expedición</label>
+            <input name="lugar_expedicion" value="{{ paciente.lugar_expedicion }}" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label>Fecha de Nacimiento</label>
+            <input type="date" name="fecha_nacimiento" value="{{ paciente.fecha_nacimiento }}" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label>Nueva Firma (opcional)</label>
+            <input type="file" name="firma" accept="image/*" class="w-full border p-2 rounded">
+        </div>
+
+        <button class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+            Guardar Cambios
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

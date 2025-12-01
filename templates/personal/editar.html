@@ -1,0 +1,16 @@
+<h1>Editar personal</h1>
+
+<form method="POST">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ persona.nombre }}" required>
+
+    <label>Tipo:</label>
+    <select name="tipo">
+        <option value="medico"     {% if persona.tipo == "medico" %}selected{% endif %}>Médico</option>
+        <option value="enfermero"  {% if persona.tipo == "enfermero" %}selected{% endif %}>Enfermero</option>
+    </select>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+
+<a href="{{ url_for('personal_lista') }}">Volver</a>

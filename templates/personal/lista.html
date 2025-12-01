@@ -1,0 +1,25 @@
+<h1>Personal médico</h1>
+
+<a href="{{ url_for('personal_agregar') }}">Agregar nuevo</a>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for p in personal %}
+    <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.tipo }}</td>
+        <td>
+            <a href="{{ url_for('personal_editar', id=p.id) }}">Editar</a>
+            |
+            <a href="{{ url_for('personal_eliminar', id=p.id) }}">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
