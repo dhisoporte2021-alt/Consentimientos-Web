@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<h2 class="mb-4">Acudientes Registrados</h2>
+
+<a href="/acudientes/nuevo" class="btn btn-primary mb-3">Registrar nuevo acudiente</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Paciente</th>
+            <th>Nombre del Acudiente</th>
+            <th>Cédula</th>
+            <th>Parentesco</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in acudientes %}
+        <tr>
+            <td>{{ a["nombre_paciente"] }}</td>
+            <td>{{ a["nombre_acudiente"] }}</td>
+            <td>{{ a["cedula_acudiente"] }}</td>
+            <td>{{ a["parentesco_acudiente"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

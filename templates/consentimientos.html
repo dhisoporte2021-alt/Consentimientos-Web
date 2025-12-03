@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="max-w-xl mx-auto mt-10">
+    <h2 class="text-xl font-bold mb-4">Buscar paciente</h2>
+
+    <!-- Input del buscador -->
+    <input 
+        id="buscarInput"
+        type="text"
+        placeholder="Escriba cédula o nombre..."
+        class="w-full p-3 border rounded-lg shadow"
+    >
+
+    <!-- Contenedor de resultados -->
+    <div id="resultados" class="mt-4 bg-white shadow rounded-lg hidden"></div>
+</div>
+
+<script>
+let timer = null;
+
+document.getElementById("buscarInput").addEventListener("input", function () {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+        let q = this.value.trim();
+
+        if (q.length === 0) {
+            document.getElementById("resultados").innerHTML = "";
+            document.getElementById("resultados").classList.add("hidden");
+            return;
+        }
+
+        fetch(`/buscar_pacientes?q=${q}`)
+            .then(res => res.json())
+            .then(data => {
+                let cont = document.getElementById("resultados");
+
+                if (data.length === 0) {
+                    cont.innerHTML = `
+                        <div class="p-3 text-gray-500">Sin resultados...</div>
+                    `;
+                    cont.classList.remove("hidden");
+                    return;
+                }
+
+                let html = "";
+                data.forEach(p => {
+                    html += `
+                        <div class="p-3 border-b hover:bg-blue-50 cursor-pointer"
+                             onclick="seleccionarPaciente(${p.id}, '${p.nombre}', '${p.tipo_documento}', '${p.documento}', '${p.ciudad_expedicion}')">
+                            <strong>${p.nombre}</strong><br>
+                            <span class="text-sm text-gray-600">${p.tipo_documento}: ${p.documento}</span>
+                        </div>
+                    `;
+                });
+
+                cont.innerHTML = html;
+                cont.classList.remove("hidden");
+            });
+
+    }, 300); // evita saturar el servidor
+});
+
+function seleccionarPaciente(id, nombre, tipoDoc, documento, ciudad) {
+    // Aquí activaremos el Modal 1
+    console.log("PACIENTE SELECCIONADO → ID:", id);
+
+    // Aquí dejaremos la estructura lista
+    abrirModalPaciente(id, nombre, tipoDoc, documento, ciudad);
+}
+</script>
+{% endblock %}

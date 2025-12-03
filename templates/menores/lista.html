@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<h2 class="mb-4">Menores de Edad Registrados</h2>
+
+<a href="/menores/nuevo" class="btn btn-primary mb-3">Registrar nuevo menor</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Paciente</th>
+            <th>Nombre del menor</th>
+            <th>Cédula</th>
+            <th>Fecha nacimiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in menores %}
+        <tr>
+            <td>{{ m["nombre_paciente"] }}</td>
+            <td>{{ m["nombre_menor"] }}</td>
+            <td>{{ m["cedula_menor"] }}</td>
+            <td>{{ m["fecha_nacimiento"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

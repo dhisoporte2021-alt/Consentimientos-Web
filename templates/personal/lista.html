@@ -1,25 +1,53 @@
-<h1>Personal médico</h1>
+{% extends "base.html" %}
 
-<a href="{{ url_for('personal_agregar') }}">Agregar nuevo</a>
+{% block contenido %}
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Tipo</th>
-        <th>Acciones</th>
-    </tr>
+<h2 class="text-2xl font-bold mb-4">Personal (Médicos y Enfermeros)</h2>
 
-    {% for p in personal %}
-    <tr>
-        <td>{{ p.id }}</td>
-        <td>{{ p.nombre }}</td>
-        <td>{{ p.tipo }}</td>
-        <td>
-            <a href="{{ url_for('personal_editar', id=p.id) }}">Editar</a>
-            |
-            <a href="{{ url_for('personal_eliminar', id=p.id) }}">Eliminar</a>
-        </td>
-    </tr>
-    {% endfor %}
+<a href="{{ url_for('personal_agregar') }}" 
+   class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+    + Agregar personal
+</a>
+
+<table class="w-full border-collapse bg-white shadow rounded mt-4">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="border p-2">ID</th>
+            <th class="border p-2">Nombre</th>
+            <th class="border p-2">Tipo</th>
+            <th class="border p-2">Cédula</th>
+            <th class="border p-2">Firma</th>
+            <th class="border p-2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for p in personal %}
+        <tr class="hover:bg-gray-50">
+            <td class="border p-2">{{ p.id }}</td>
+            <td class="border p-2">{{ p.nombre }}</td>
+            <td class="border p-2">{{ p.tipo }}</td>
+            <td class="border p-2">{{ p.cedula }}</td>
+            <td class="border p-2">
+                {% if p.firma %}
+                    <img src="/firmas/{{ p.firma }}" class="h-12">
+                {% else %}
+                    <span class="text-gray-400">Sin firma</span>
+                {% endif %}
+            </td>
+            <td class="border p-2">
+                <a href="{{ url_for('personal_editar', id=p.id) }}" 
+                   class="text-blue-600">Editar</a>
+                |
+                <a href="{{ url_for('personal_eliminar', id=p.id) }}" 
+                   class="text-red-600"
+                   onclick="return confirm('¿Eliminar este registro?');">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+
+{% endblock %}

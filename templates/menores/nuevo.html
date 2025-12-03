@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<h2 class="mb-4">Registrar Menor de Edad</h2>
+
+<form method="POST">
+
+    <!-- Relación con paciente -->
+    <label>Paciente asociado</label>
+    <select name="paciente_id" class="form-select mb-3" required>
+        <option value="">Seleccione...</option>
+        {% for p in pacientes %}
+            <option value="{{ p['id'] }}">{{ p['nombre'] }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Nombre completo del menor</label>
+    <input type="text" name="nombre_menor" class="form-control mb-3" required>
+
+    <label>Cédula del menor (opcional)</label>
+    <input type="text" name="cedula_menor" class="form-control mb-3">
+
+    <label>Lugar de expedición</label>
+    <input type="text" name="lugar_expedicion_menor" class="form-control mb-3">
+
+    <label>Fecha de nacimiento</label>
+    <input type="date" name="fecha_nacimiento" class="form-control mb-3">
+
+    <label>Firma del menor (ruta o texto temporal)</label>
+    <input type="text" name="firma_menor" class="form-control mb-4">
+
+    <button class="btn btn-success">Guardar</button>
+
+</form>
+
+{% endblock %}

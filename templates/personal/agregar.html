@@ -1,16 +1,36 @@
-<h1>Agregar personal</h1>
+{% extends "base.html" %}
 
-<form method="POST">
-    <label>Nombre:</label>
-    <input type="text" name="nombre" required>
+{% block contenido %}
 
-    <label>Tipo:</label>
-    <select name="tipo">
-        <option value="medico">Médico</option>
+<h2 class="text-2xl font-bold mb-4">Agregar Personal</h2>
+
+<form action="" method="POST" enctype="multipart/form-data" 
+      class="bg-white shadow p-6 rounded w-full max-w-xl">
+
+    <label class="block mb-2 font-semibold">Nombre completo</label>
+    <input type="text" name="nombre" required
+           class="w-full border p-2 rounded mb-4">
+
+    <label class="block mb-2 font-semibold">Tipo</label>
+    <select name="tipo" required class="w-full border p-2 rounded mb-4">
+        <option value="doctor">Doctor</option>
         <option value="enfermero">Enfermero</option>
     </select>
 
-    <button type="submit">Guardar</button>
+    <label class="block mb-2 font-semibold">Cédula</label>
+    <input type="text" name="cedula" required
+           class="w-full border p-2 rounded mb-4">
+
+    <label class="block mb-2 font-semibold">Firma (imagen)</label>
+    <input type="file" name="firma" accept="image/*"
+           class="w-full border p-2 rounded mb-4">
+
+    <button class="bg-green-600 text-white px-4 py-2 rounded">
+        Guardar
+    </button>
+
+    <a href="{{ url_for('personal_lista') }}" 
+       class="ml-4 text-gray-600">Cancelar</a>
 </form>
 
-<a href="{{ url_for('personal_lista') }}">Volver</a>
+{% endblock %}

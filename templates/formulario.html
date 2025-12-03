@@ -59,7 +59,7 @@
 
     <!-- DOCTOR -->
     <h2 class="font-bold">Doctor</h2>
-    <select name="doctor" class="border p-2 rounded w-full">
+    <select name="doctor_id" class="border p-2 rounded w-full">
         {% for d in medicos %}
             <option value="{{ d.nombre }}">{{ d.nombre }} - {{ d.cedula }}</option>
         {% endfor %}
@@ -67,7 +67,7 @@
 
     <!-- ENFERMERO -->
     <h2 class="font-bold">Enfermero</h2>
-    <select name="enfermero" class="border p-2 rounded w-full">
+    <select name="enfermero_id" class="border p-2 rounded w-full">
         {% for e in enfermeros %}
             <option value="{{ e.nombre }}">{{ e.nombre }} - {{ e.cedula }}</option>
         {% endfor %}

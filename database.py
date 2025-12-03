@@ -11,14 +11,15 @@ def init_db():
 
     # Personal (doctores / enfermeros)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS personal (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            tipo TEXT NOT NULL,
-            cedula TEXT,
-            firma TEXT
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS personal (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        tipo TEXT NOT NULL,   -- doctor o enfermero
+        cedula TEXT,
+        firma TEXT
+    )
+""")
+    
 
     # Pacientes
     cursor.execute("""
@@ -34,29 +35,31 @@ def init_db():
 
     # Acudientes
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS acudientes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            cedula TEXT NOT NULL UNIQUE,
-            parentesco TEXT,
-            lugar_expedicion TEXT,
-            firma TEXT
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS acudientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        paciente_id INTEGER NOT NULL,
+        nombre_acudiente TEXT NOT NULL,
+        cedula_acudiente TEXT,
+        lugar_expedicion_acudiente TEXT,
+        parentesco_acudiente TEXT,
+        firma_acudiente TEXT,
+        FOREIGN KEY (paciente_id) REFERENCES pacientes(id)
+    )
+""")
 
     # Menores de edad
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS menores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            cedula TEXT NOT NULL UNIQUE,
-            lugar_expedicion TEXT,
-            firma TEXT,
-            fecha_nacimiento TEXT,
-            acudiente_id INTEGER,
-            FOREIGN KEY(acudiente_id) REFERENCES acudientes(id)
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS menores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        paciente_id INTEGER NOT NULL,
+        nombre_menor TEXT NOT NULL,
+        cedula_menor TEXT,
+        lugar_expedicion_menor TEXT,
+        fecha_nacimiento TEXT,
+        firma_menor TEXT,
+        FOREIGN KEY (paciente_id) REFERENCES pacientes(id)
+    )
+""")
 
     # Historial de consentimientos
     cursor.execute("""

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<h2 class="mb-4">Registrar Acudiente</h2>
+<form method="POST" class="bg-white p-6 rounded-xl shadow space-y-6">
+
+    <!-- Primera fila: Paciente + Nombre del acudiente -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Paciente -->
+        <div>
+            <label class="block font-semibold mb-1">Paciente</label>
+            <select name="paciente_id" required
+                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Seleccione...</option>
+                {% for p in pacientes %}
+                    <option value="{{ p['id'] }}">{{ p['nombre'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Nombre del acudiente -->
+        <div>
+            <label class="block font-semibold mb-1">Nombre del acudiente</label>
+            <input type="text" name="nombre_acudiente" required
+                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+    </div>
+
+    <!-- Segunda fila: Cédula + Lugar de expedición -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Cédula -->
+        <div>
+            <label class="block font-semibold mb-1">Cédula del acudiente</label>
+            <input type="text" name="cedula_acudiente"
+                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <!-- Lugar -->
+        <div>
+            <label class="block font-semibold mb-1">Lugar de expedición</label>
+            <input type="text" name="lugar_expedicion_acudiente"
+                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+    </div>
+
+    <!-- Parentesco -->
+    <div>
+        <label class="block font-semibold mb-1">Parentesco</label>
+        <input type="text" name="parentesco_acudiente" required
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <!-- Firma -->
+    <div>
+        <label class="block font-semibold mb-1">Firma del acudiente (ruta o texto temporal)</label>
+        <input type="text" name="firma_acudiente"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <button
+        class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+        Guardar
+    </button>
+
+</form>
+<!-- <form method="POST" class="space-y-4 bg-white p-6 rounded-xl shadow">
+
+    
+    <div>
+        <label class="block font-semibold mb-1">Paciente</label>
+        <select name="paciente_id" required
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Seleccione...</option>
+            {% for p in pacientes %}
+                <option value="{{ p['id'] }}">{{ p['nombre'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    
+    <div>
+        <label class="block font-semibold mb-1">Nombre del acudiente</label>
+        <input type="text" name="nombre_acudiente" required
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+   
+    <div>
+        <label class="block font-semibold mb-1">Cédula del acudiente</label>
+        <input type="text" name="cedula_acudiente"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    
+    <div>
+        <label class="block font-semibold mb-1">Lugar de expedición</label>
+        <input type="text" name="lugar_expedicion_acudiente"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    
+    <div>
+        <label class="block font-semibold mb-1">Parentesco</label>
+        <input type="text" name="parentesco_acudiente" required
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+   
+    <div>
+        <label class="block font-semibold mb-1">Firma del acudiente (ruta o texto temporal)</label>
+        <input type="text" name="firma_acudiente"
+            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <button
+        class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+        Guardar
+    </button>
+
+</form> -->
+
+
+{% endblock %}
