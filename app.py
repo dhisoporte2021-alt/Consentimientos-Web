@@ -35,6 +35,9 @@ def cargar_personal():
 def index():
     return render_template("index.html")
 
+@app.route("/consentimientos")
+def consentimientos():
+    return render_template("consentimientos.html")
 
 @app.route("/formulario")
 def formulario():

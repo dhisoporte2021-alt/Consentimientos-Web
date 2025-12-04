@@ -1,11 +1,44 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-
+<div>
 <h1 class="text-2xl font-semibold mb-4">Bienvenido</h1>
+<div class="flex gap-4">
 
-<a href="/formulario" class="px-4 py-2 bg-blue-500 text-white rounded">
-    Crear nuevo consentimiento
+<a href="/pacientes/agregar" class="bg-neutral-primary-soft block p-3 h-60 border border-default rounded-base shadow-xs transition hover:bg-gray-200">
+    <div class="flex flex-col h-full">
+
+        <!-- Icono (70%) -->
+        <div class="basis-[70%] flex items-center justify-center">
+            <h5 class="text-6xl font-semibold tracking-tight text-heading leading-8">
+                <i class="fa-solid fa-user"></i>
+            </h5>
+        </div>
+
+        <!-- Texto (30%) -->
+        <div class="basis-[30%] flex items-center justify-center">
+            <p class="text-body text-lg">Crear usuarios</p>
+        </div>
+
+    </div>
+</a>
+
+<a href="/formulario" class="bg-neutral-primary-soft block p-3 h-60 border border-default rounded-base shadow-xs transition hover:bg-gray-200">
+    <div class="flex flex-col h-full">
+
+        <!-- Icono (70%) -->
+        <div class="basis-[70%] flex items-center justify-center">
+            <h5 class="text-6xl font-semibold tracking-tight text-heading leading-8">
+                <i class="fa-regular fa-file-lines"></i>
+            </h5>
+        </div>
+
+        <!-- Texto (30%) -->
+        <div class="basis-[30%] flex items-center justify-center">
+            <p class="text-body text-lg">Crear Consentimientos</p>
+        </div>
+
+    </div>
 </a>
 
 {% endblock %}
