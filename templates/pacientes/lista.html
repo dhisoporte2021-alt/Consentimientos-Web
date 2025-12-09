@@ -2,7 +2,7 @@
 
 {% block contenido %}
 
-<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+<!-- <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
 
     <div class="flex justify-between mb-4">
         <h1 class="text-2xl font-bold">Pacientes</h1>
@@ -13,7 +13,7 @@
         </a>
     </div>
 
-    <table class="w-full border">
+    <table class="w-full border-collapse bg-white shadow rounded mt-4">
         <thead class="bg-gray-200">
             <tr>
                 <th class="p-2 border">ID</th>
@@ -26,13 +26,13 @@
         <tbody>
         {% for p in pacientes %}
             <tr>
-                <td class="border p-2">{{ p.id }}</td>
-                <td class="border p-2">{{ p.nombre }}</td>
-                <td class="border p-2">{{ p.cedula }}</td>
-                <td class="border p-2">
-                    <a href="/pacientes/editar/{{ p.id }}" class="text-blue-600">Editar</a> |
+                <td class="border text-center p-2">{{ p.id }}</td>
+                <td class="border text-center p-2">{{ p.nombre }}</td>
+                <td class="border text-center p-2">{{ p.cedula }}</td>
+                <td class="border text-center p-2">
+                    <a href="/pacientes/editar/{{ p.id }}" class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Editar</a> |
                     <a href="/pacientes/eliminar/{{ p.id }}"
-                       class="text-red-600"
+                       class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
                        onclick="return confirm('¿Eliminar paciente?')">
                         Eliminar
                     </a>
@@ -43,6 +43,52 @@
 
     </table>
 
-</div>
+</div> -->
+
+
+<h2 class="text-2xl font-bold mb-4">Pacientes</h2>
+
+<a href="/pacientes/agregar" 
+   class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+    + Agregar Pacientes
+</a>
+
+<table class="w-full border-collapse bg-white shadow rounded mt-4">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="border p-2">ID</th>
+            <th class="border p-2">Nombre</th>
+            <th class="border p-2">Cédula</th>
+            <th class="border p-2">Tipo</th>
+            <th class="border p-2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for p in pacientes %}
+        <tr class="hover:bg-gray-50">
+            <td class="border text-center p-2">{{ p.id }}</td>
+            <td class="border text-center p-2">{{ p.nombre }}</td>
+            <td class="border text-center p-2">{{ p.cedula }}</td>
+            <td class="border text-center p-2">{{ p.tipo_documento }}</td>
+            
+            
+            <td class="border text-center p-2">
+                <a href="/pacientes/editar/{{ p.id }}" 
+                   class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Editar</a>
+                |
+                <a href="/pacientes/eliminar/{{ p.id }}" 
+                   class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                   onclick="return confirm('¿Eliminar este registro?');">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
+
+
+

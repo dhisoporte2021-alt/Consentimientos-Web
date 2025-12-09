@@ -27,6 +27,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
             cedula TEXT NOT NULL UNIQUE,
+            tipo_documento TEXT,
             lugar_expedicion TEXT,
             fecha_nacimiento TEXT,
             firma TEXT

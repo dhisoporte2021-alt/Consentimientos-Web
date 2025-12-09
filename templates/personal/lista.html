@@ -24,23 +24,23 @@
     <tbody>
         {% for p in personal %}
         <tr class="hover:bg-gray-50">
-            <td class="border p-2">{{ p.id }}</td>
-            <td class="border p-2">{{ p.nombre }}</td>
-            <td class="border p-2">{{ p.tipo }}</td>
-            <td class="border p-2">{{ p.cedula }}</td>
-            <td class="border p-2">
+            <td class="border text-center p-2">{{ p.id }}</td>
+            <td class="border text-center p-2">{{ p.nombre }}</td>
+            <td class="border text-center p-2">{{ p.tipo }}</td>
+            <td class="border text-center p-2">{{ p.cedula }}</td>
+            <td class="border text-center p-2">
                 {% if p.firma %}
                     <img src="/firmas/{{ p.firma }}" class="h-12">
                 {% else %}
                     <span class="text-gray-400">Sin firma</span>
                 {% endif %}
             </td>
-            <td class="border p-2">
+            <td class="border text-center p-2">
                 <a href="{{ url_for('personal_editar', id=p.id) }}" 
-                   class="text-blue-600">Editar</a>
+                   class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Editar</a>
                 |
                 <a href="{{ url_for('personal_eliminar', id=p.id) }}" 
-                   class="text-red-600"
+                   class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
                    onclick="return confirm('¿Eliminar este registro?');">
                    Eliminar
                 </a>

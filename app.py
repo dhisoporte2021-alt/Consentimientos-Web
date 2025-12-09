@@ -37,7 +37,7 @@ def index():
 
 @app.route("/consentimientos")
 def consentimientos():
-    return render_template("consentimientos.html")
+    return render_template("./consentimientos.html")
 
 @app.route("/formulario")
 def formulario():
@@ -263,6 +263,7 @@ def pacientes_agregar():
         nombre = request.form["nombre"]
         cedula = request.form["cedula"]
         lugar = request.form["lugar_expedicion"]
+        tipo = request.form["tipo_documento"]
         fecha_nac = request.form["fecha_nacimiento"]
 
         # Procesar firma
@@ -275,9 +276,9 @@ def pacientes_agregar():
 
         db = get_db()
         db.execute("""
-            INSERT INTO pacientes (nombre, cedula, lugar_expedicion, firma, fecha_nacimiento)
-            VALUES (?, ?, ?, ?, ?)
-        """, (nombre, cedula, lugar, nombre_firma, fecha_nac))
+            INSERT INTO pacientes (nombre, cedula, lugar_expedicion, firma, fecha_nacimiento, tipo_documento)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (nombre, cedula, lugar, nombre_firma, tipo, fecha_nac))
         db.commit()
         db.close()
 
@@ -294,6 +295,7 @@ def pacientes_editar(id):
         nombre = request.form["nombre"]
         cedula = request.form["cedula"]
         lugar = request.form["lugar_expedicion"]
+        tipo = request.form["tipo_documento"]
         fecha_nac = request.form["fecha_nacimiento"]
 
         firma_archivo = request.files["firma"]
@@ -306,14 +308,14 @@ def pacientes_editar(id):
 
         if nombre_firma:
             db.execute("""
-                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?, fecha_nacimiento=?, firma=?
+                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?, tipo_documento=? fecha_nacimiento=?, firma=?
                 WHERE id=?
-            """, (nombre, cedula, lugar, fecha_nac, nombre_firma, id))
+            """, (nombre, cedula, lugar, fecha_nac, tipo, nombre_firma, id))
         else:
             db.execute("""
-                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?, fecha_nacimiento=?
+                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?,tipo_documento=?, fecha_nacimiento=?
                 WHERE id=?
-            """, (nombre, cedula, lugar, fecha_nac, id))
+            """, (nombre, cedula, lugar, tipo, fecha_nac, id))
 
         db.commit()
         db.close()
@@ -333,29 +335,81 @@ def pacientes_eliminar(id):
     db.close()
     return redirect(url_for("pacientes_lista"))
 
+# @app.route("/buscar_pacientes")
+# def buscar_pacientes():
+#     termino = request.args.get("q", "").strip()
+
+#     # Si no escriben nada → no devuelve nada para evitar recargar todo
+#     if termino == "":
+#         return jsonify([])
+
+#     conn = sqlite3.connect("database.db")
+#     conn.row_factory = sqlite3.Row
+#     cur = conn.cursor()
+
+#     cur.execute("""
+#         SELECT id, nombre, tipo_documento, cedula, ciudad_expedicion
+#         FROM pacientes
+#         WHERE documento LIKE ? OR nombre LIKE ?
+#         ORDER BY nombre ASC
+#         LIMIT 20
+#     """, (f"%{termino}%", f"%{termino}%"))
+
+#     resultados = [dict(row) for row in cur.fetchall()]
+
+#     return jsonify(resultados)
 @app.route("/buscar_pacientes")
 def buscar_pacientes():
     termino = request.args.get("q", "").strip()
 
-    # Si no escriben nada → no devuelve nada para evitar recargar todo
     if termino == "":
         return jsonify([])
 
-    conn = sqlite3.connect("mi_base.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, nombre, tipo_documento, documento, ciudad_expedicion
+        SELECT id, nombre, tipo_documento, cedula, lugar_expedicion
         FROM pacientes
-        WHERE documento LIKE ? OR nombre LIKE ?
+        WHERE cedula LIKE ? OR nombre LIKE ?
         ORDER BY nombre ASC
         LIMIT 20
     """, (f"%{termino}%", f"%{termino}%"))
 
     resultados = [dict(row) for row in cur.fetchall()]
+    conn.close()
 
     return jsonify(resultados)
+
+@app.route("/api/buscar_paciente")
+def api_buscar_paciente():
+    query = request.args.get("query", "").strip()
+
+    if not query:
+        return {"result": []}
+
+    db = get_db()
+    data = db.execute("""
+        SELECT id, nombre, cedula, lugar_expedicion
+        FROM pacientes
+        WHERE nombre LIKE ? OR cedula LIKE ?
+        ORDER BY nombre LIMIT 10
+    """, (f"%{query}%", f"%{query}%")).fetchall()
+    db.close()
+
+    # Convertir a lista normal
+    pacientes = [
+        {
+            "id": p["id"],
+            "nombre": p["nombre"],
+            "cedula": p["cedula"],
+            "ciudad": p["lugar_expedicion"]
+        }
+        for p in data
+    ]
+
+    return {"result": pacientes}
+
 
 #MENOR DE EDAD 
 

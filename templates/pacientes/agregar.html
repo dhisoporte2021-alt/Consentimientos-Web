@@ -8,16 +8,26 @@
 
     <form method="POST" action="/pacientes/agregar" enctype="multipart/form-data" class="grid grid-cols-1 gap-4">
 
-        <div>
-            <label>Cédula</label>
-            <input name="cedula" required class="w-full border p-2 rounded">
-        </div>
-
+       
         <div>
             <label>Nombre Completo</label>
             <input name="nombre" required class="w-full border p-2 rounded">
         </div>
-
+        <div>
+            <label>Documento</label>
+            <input name="cedula" required class="w-full border p-2 rounded">
+        </div>
+        <div>
+            <label>Tipo de Documento</label>
+            <select name="tipo_documento" class="border p-2 rounded w-full">
+                 <option value="CC">Cedula</option>
+                 <option value="PA">Pasaporte</option>
+                 <option value="TI">Tarjeta de identidad</option>
+                 <option value="CE">Cedula Extranjeria</option>
+                 
+            </select>
+            
+        </div>
         <div>
             <label>Lugar de Expedición</label>
             <input name="lugar_expedicion" class="w-full border p-2 rounded">
