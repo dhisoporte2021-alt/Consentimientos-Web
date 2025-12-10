@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
+from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session
 import sqlite3
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -12,14 +12,98 @@ app = Flask(__name__)
 
 PLANTILLAS_DIR = os.path.join(os.getcwd(), "plantillas")
 
-# print("Ruta de plantillas:", PLANTILLAS_DIR)
-# if os.path.exists(PLANTILLAS_DIR):
-#     print("Archivos encontrados:", os.listdir(PLANTILLAS_DIR))
-# else:
-#     print("La carpeta de plantillas NO existe")
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        usuario = request.form["usuario"]
+        password = request.form["password"]
+
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuarios WHERE usuario=? AND password=?", (usuario, password))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
+            session["usuario"] = user["usuario"]
+            session["rol"] = user["rol"]
+            return redirect("/dashboard")
+        else:
+            return render_template("login.html", error="Usuario o contraseña incorrectos")
+
+    return render_template("login.html")
 
 
-# Cargar doctores y enfermeros desde Excel
+##INICIO CRUD DE USUARIOS
+##crear usuarios en la base de datos
+@app.route("/usuarios/crear", methods=["GET", "POST"])
+def crear_usuario():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        email = request.form["email"]
+        usuario = request.form["usuario"]
+        password = request.form["password"]
+        rol = request.form.get("rol", "usuario")
+
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO usuarios (nombre, email, usuario, password, rol)
+            VALUES (?, ?, ?, ?, ?)
+        """, (nombre, email, usuario, password, rol))
+        conn.commit()
+        conn.close()
+        return redirect("/usuarios")
+
+    return render_template("usuarios_crear.html")
+
+##LISTAR USUARIOS
+@app.route("/usuarios")
+def listar_usuarios():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+    conn.close()
+    return render_template("usuarios_listar.html", usuarios=usuarios)
+
+##EDITAR USUARIOS
+@app.route("/usuarios/editar/<int:id>", methods=["GET", "POST"])
+def editar_usuario(id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        email = request.form["email"]
+        usuario = request.form["usuario"]
+        rol = request.form["rol"]
+
+        cursor.execute("""
+            UPDATE usuarios
+            SET nombre=?, email=?, usuario=?, rol=?
+            WHERE id=?
+        """, (nombre, email, usuario, rol, id))
+        conn.commit()
+        conn.close()
+        return redirect("/usuarios")
+
+    cursor.execute("SELECT * FROM usuarios WHERE id=?", (id,))
+    usuario = cursor.fetchone()
+    conn.close()
+    return render_template("usuarios_editar.html", usuario=usuario)
+
+##ELIMINAR USUARIOS
+@app.route("/usuarios/eliminar/<int:id>")
+def eliminar_usuario(id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM usuarios WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect("/usuarios")
+##FIN CRUD DE USUARIOS
+
 def cargar_personal():
     db = get_db()
     data = db.execute("SELECT * FROM personal").fetchall()
@@ -335,29 +419,7 @@ def pacientes_eliminar(id):
     db.close()
     return redirect(url_for("pacientes_lista"))
 
-# @app.route("/buscar_pacientes")
-# def buscar_pacientes():
-#     termino = request.args.get("q", "").strip()
 
-#     # Si no escriben nada → no devuelve nada para evitar recargar todo
-#     if termino == "":
-#         return jsonify([])
-
-#     conn = sqlite3.connect("database.db")
-#     conn.row_factory = sqlite3.Row
-#     cur = conn.cursor()
-
-#     cur.execute("""
-#         SELECT id, nombre, tipo_documento, cedula, ciudad_expedicion
-#         FROM pacientes
-#         WHERE documento LIKE ? OR nombre LIKE ?
-#         ORDER BY nombre ASC
-#         LIMIT 20
-#     """, (f"%{termino}%", f"%{termino}%"))
-
-#     resultados = [dict(row) for row in cur.fetchall()]
-
-#     return jsonify(resultados)
 @app.route("/buscar_pacientes")
 def buscar_pacientes():
     termino = request.args.get("q", "").strip()
