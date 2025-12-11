@@ -97,3 +97,4 @@ document.getElementById("menor_checkbox").addEventListener("change", function() 
     let container = document.getElementById("menor_container");
     container.classList.toggle("hidden", !this.checked);
 });
+

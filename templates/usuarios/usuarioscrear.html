@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div class="max-w-lg mx-auto bg-white p-8 shadow rounded mt-10">
+    <h2 class="text-xl font-bold mb-6">Editar usuario</h2>
+
+    <form method="POST">
+        <label class="block mb-2">Nombre</label>
+        <input type="text" name="nombre" value="{{ usuario.nombre }}" class="w-full border p-2 rounded mb-4">
+
+        <label class="block mb-2">Email</label>
+        <input type="email" name="email" value="{{ usuario.email }}" class="w-full border p-2 rounded mb-4">
+
+        <label class="block mb-2">Usuario</label>
+        <input type="text" name="usuario" value="{{ usuario.usuario }}" class="w-full border p-2 rounded mb-4">
+
+        <label class="block mb-2">Rol</label>
+        <select name="rol" class="w-full border p-2 rounded mb-6">
+            <option value="usuario" {% if usuario.rol == "usuario" %}selected{% endif %}>Usuario</option>
+            <option value="admin" {% if usuario.rol == "admin" %}selected{% endif %}>Administrador</option>
+        </select>
+
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Actualizar
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,8 +1,88 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block contenido %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-2xl font-bold mb-4">Editar Paciente</h1>
 
-{% block contenido %}
+  <form
+    method="POST"
+    action=""
+    enctype="multipart/form-data"
+    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+  > 
+  <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Nombre Completo</label
+      >
+      <input
+        name="nombre"
+        value="{{ paciente.nombre }}"
+        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Cédula</label>
+      <input
+        name="cedula"
+        value="{{ paciente.cedula }}"
+        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
 
-<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+   
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Lugar de Expedición</label
+      >
+      <input
+        name="lugar_expedicion"
+        value="{{ paciente.lugar_expedicion }}"
+        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+    <div>
+      <label>Tipo de Documento</label>
+      <select name="tipo_documento" class="border p-2 rounded w-full">
+        <option value="CC" {% if paciente.tipo_documento == "CC" %}selected{% endif %} >Cedula</option>
+        <option value="PA" {% if paciente.tipo_documento == "PA" %}selected{% endif %} >Pasaporte</option>
+        <option value="TI" {% if paciente.tipo_documento =="TI" %}selected{% endif %} >Tarjeta de identidad</option>
+        <option value="CE" {% if paciente.tipo_documento =="CE" %}selected{% endif %} >Cedula Extranjeria</option>
+      </select>
+    </div>
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Fecha de Nacimiento</label
+      >
+      <input
+        type="date"
+        name="fecha_nacimiento"
+        value="{{ paciente.fecha_nacimiento }}"
+        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700"
+        >Nueva Firma (opcional)</label
+      >
+      <input
+        type="file"
+        name="firma"
+        accept="image/*"
+        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+
+    <div class="md:col-span-2">
+      <button
+        class="w-full md:w-auto md:float-right bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-150 ease-in-out"
+      >
+        Guardar Cambios
+      </button>
+    </div>
+  </form>
+</div>
+<!-- <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
 
     <h1 class="text-2xl font-bold mb-4">Editar Paciente</h1>
 
@@ -39,6 +119,6 @@
 
     </form>
 
-</div>
+</div> -->
 
 {% endblock %}

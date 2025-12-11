@@ -1,76 +1,77 @@
-{% extends "base.html" %} 
-{% block contenido %}
+{% extends "base.html" %} {% block contenido %}
 <div>
-  <h1 class="text-2xl font-semibold mb-4">Bienvenido</h1>
+  <h1 class="text-2xl font-semibold mb-4">Panel de Control</h1>
+  <h3 class="text-1xl font-semibold mb-4">
+    Bienvenido al dashboard principal del sistema
+    <br />
+    <br />
+  </h3>
   <div class="flex gap-4 h-96">
     <!-- CARD DE USUARIOS -->
     <!-- Nuevo código con efecto hover y animación -->
-    <a href="/pacientes" class="block">
-  <div class="flex justify-center">
-    <div
-      class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
-    >
-      <!-- Círculo animado -->
-      <div
-        class="absolute h-[5em] w-[5em] -top-[2.5em] -right-[2.5em] rounded-full bg-[#1488A6] group-hover:scale-[900%] duration-500 z-[-1]"
-      ></div>
-
-      <!-- Texto inferior -->
-      <div
-        class="text-[0.8em] no-underline p-2 rounded-full absolute bottom-[1em] left-[1em] text-black group-hover:text-white font-bold duration-500"
-      >
-        <span
-          class="relative before:h-[0.16em] before:absolute before:content-[''] before:bg-[#427d8d] group-hover:before:bg-[white] duration-300 before:bottom-0 before:left-0"
+    <a href="/personal" class="block">
+      <div class="flex justify-center">
+        <div
+          class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
         >
-          Ver Pacientes
-        </span>
-        <i class="fa-solid fa-arrow-right ml-1"></i>
-      </div>
+          <!-- Círculo animado -->
+          <div
+            class="absolute h-[5em] w-[5em] -top-[2.5em] -right-[2.5em] rounded-full bg-[#6ec2bd] group-hover:scale-[900%] duration-500 z-[-1]"
+          ></div>
 
-      <!-- Título principal -->
-      <h1
-        class="z-20 font-bold font-Poppin group-hover:text-white duration-500 text-[1.4em] whitespace-nowrap"
-      >
-        PACIENTES
-      </h1>
-    </div>
-  </div>
-</a>
+          <!-- Texto inferior -->
+          <div
+            class="text-[0.8em] no-underline p-2 rounded-full absolute bottom-[1em] left-[1em] text-black group-hover:text-white font-bold duration-500"
+          >
+            <span
+              class="relative before:h-[0.16em] text-4xl before:absolute before:content-[''] before:bg-[#427d8d] group-hover:before:bg-[white] duration-300 before:bottom-0 before:left-0"
+            >
+              <i class="fa-solid fa-user-doctor"></i>
+            </span>
+          </div>
+
+          <!-- Título principal -->
+          <h1
+            class="z-20 font-bold font-Poppin group-hover:text-white duration-500 text-[1.4em] whitespace-nowrap"
+          >
+            PROFESIONALES <i class="fa-solid fa-arrow-right ml-1"></i>
+          </h1>
+        </div>
+      </div>
+    </a>
 
     <!-- CARD DE CONSENTIMIENTOS -->
     <!-- Nuevo código con efecto hover y animación -->
     <a href="/consentimientos" class="block">
-  <div class="flex justify-center">
-    <div
-      class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
-    >
-      <!-- Círculo animado -->
-      <div
-        class="absolute h-[5em] w-[5em] -top-[2.5em] -right-[2.5em] rounded-full bg-[#1488A6] group-hover:scale-[900%] duration-500 z-[-1]"
-      ></div>
-
-      <!-- Texto inferior -->
-      <div
-        class="text-[0.8em] no-underline p-2 rounded-full absolute bottom-[1em] left-[1em] text-black group-hover:text-white font-bold duration-500"
-      >
-        <span
-          class="relative before:h-[0.16em] before:absolute before:content-[''] before:bg-[#427d8d] group-hover:before:bg-[white] duration-300 before:bottom-0 before:left-0"
+      <div class="flex justify-center">
+        <div
+          class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
         >
-          Ver Consentimientos
-        </span>
-        <i class="fa-solid fa-arrow-right ml-1"></i>
+          <!-- Círculo animado -->
+          <div
+            class="absolute h-[5em] w-[5em] -top-[2.5em] -right-[2.5em] rounded-full bg-[#6ec2bd] group-hover:scale-[900%] duration-500 z-[-1]"
+          ></div>
+
+          <!-- Texto inferior -->
+          <div
+            class="text-[0.8em] no-underline p-2 rounded-full absolute bottom-[1em] left-[1em] text-black group-hover:text-white font-bold duration-500"
+          >
+            <span
+              class="relative before:h-[0.16em] before:absolute text-4xl before:content-[''] before:bg-[#427d8d] group-hover:before:bg-[white] duration-300 before:bottom-0 before:left-0"
+            >
+              <i class="fa-regular fa-file-lines"></i>
+            </span>
+          </div>
+
+          <!-- Título principal -->
+          <h1
+            class="z-20 font-bold font-Poppin group-hover:text-white duration-500 text-[1.4em] whitespace-nowrap"
+          >
+            CONSENTIMIENTOS <i class="fa-solid fa-arrow-right ml-1"></i>
+          </h1>
+        </div>
       </div>
-
-      <!-- Título principal -->
-      <h1
-        class="z-20 font-bold font-Poppin group-hover:text-white duration-500 text-[1.4em] whitespace-nowrap"
-      >
-        CONSENTIMIENTOS
-      </h1>
-    </div>
-  </div>
-</a>
-
+    </a>
   </div>
   {% endblock %}
 </div>

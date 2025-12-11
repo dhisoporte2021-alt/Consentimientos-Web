@@ -58,8 +58,11 @@
         <tr>
             <th class="border p-2">ID</th>
             <th class="border p-2">Nombre</th>
-            <th class="border p-2">Cédula</th>
             <th class="border p-2">Tipo</th>
+            <th class="border p-2">Cédula</th>
+            <th class="border p-2">Fecha de Nacimiento</th>
+            <th class="border p-2">firma</th>
+            
             <th class="border p-2">Acciones</th>
         </tr>
     </thead>
@@ -69,8 +72,16 @@
         <tr class="hover:bg-gray-50">
             <td class="border text-center p-2">{{ p.id }}</td>
             <td class="border text-center p-2">{{ p.nombre }}</td>
+            <td class="border text-center p-2">{{ p.fecha_nacimiento }}</td>
             <td class="border text-center p-2">{{ p.cedula }}</td>
             <td class="border text-center p-2">{{ p.tipo_documento }}</td>
+            <td class="border text-center p-2">
+                {% if p.firma %}
+                    <img src="/firmas/{{ p.firma }}" class="h-12 mx-auto" />
+                {% else %}
+                    <span class="text-gray-400">Sin firma</span>
+                {% endif %} 
+                </td>
             
             
             <td class="border text-center p-2">

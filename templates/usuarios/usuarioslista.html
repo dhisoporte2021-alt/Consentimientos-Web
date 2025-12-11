@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Usuarios</h1>
+    <a href="/usuarios/crear" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        + Nuevo usuario
+    </a>
+</div>
+
+<table class="w-full border-collapse bg-white shadow">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="border p-2">ID</th>
+            <th class="border p-2">Nombre</th>
+            <th class="border p-2">Usuario</th>
+            <th class="border p-2">Email</th>
+            <th class="border p-2">Rol</th>
+            <th class="border p-2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr class="hover:bg-gray-50">
+            <td class="border p-2 text-center">{{ u.id }}</td>
+            <td class="border p-2 text-center">{{ u.nombre }}</td>
+            <td class="border p-2 text-center">{{ u.usuario }}</td>
+            <td class="border p-2 text-center">{{ u.email }}</td>
+            <td class="border p-2 text-center capitalize">{{ u.rol }}</td>
+
+            <td class="border p-2 text-center">
+                <a href="/usuarios/editar/{{ u.id }}" 
+                   class="text-blue-600 hover:underline">Editar</a>
+                |
+                <a href="/usuarios/eliminar/{{ u.id }}" 
+                   class="text-red-600 hover:underline"
+                   onclick="return confirm('¿Eliminar este usuario?');">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

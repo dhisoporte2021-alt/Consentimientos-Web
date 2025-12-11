@@ -55,7 +55,7 @@ def crear_usuario():
         conn.close()
         return redirect("/usuarios")
 
-    return render_template("usuarios_crear.html")
+    return render_template("usuarios/usuarioscrear.html")
 
 ##LISTAR USUARIOS
 @app.route("/usuarios")
@@ -65,7 +65,7 @@ def listar_usuarios():
     cursor.execute("SELECT * FROM usuarios")
     usuarios = cursor.fetchall()
     conn.close()
-    return render_template("usuarios_listar.html", usuarios=usuarios)
+    return render_template("usuarios/usuarioslista.html", usuarios=usuarios)
 
 ##EDITAR USUARIOS
 @app.route("/usuarios/editar/<int:id>", methods=["GET", "POST"])
@@ -91,7 +91,7 @@ def editar_usuario(id):
     cursor.execute("SELECT * FROM usuarios WHERE id=?", (id,))
     usuario = cursor.fetchone()
     conn.close()
-    return render_template("usuarios_editar.html", usuario=usuario)
+    return render_template("./usuarioseditar.html", usuario=usuario)
 
 ##ELIMINAR USUARIOS
 @app.route("/usuarios/eliminar/<int:id>")
@@ -392,14 +392,14 @@ def pacientes_editar(id):
 
         if nombre_firma:
             db.execute("""
-                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?, tipo_documento=? fecha_nacimiento=?, firma=?
+                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?,  fecha_nacimiento=?, tipo_documento=?, firma=?
                 WHERE id=?
             """, (nombre, cedula, lugar, fecha_nac, tipo, nombre_firma, id))
         else:
             db.execute("""
-                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?,tipo_documento=?, fecha_nacimiento=?
+                UPDATE pacientes SET nombre=?, cedula=?, lugar_expedicion=?, fecha_nacimiento=?, tipo_documento=?
                 WHERE id=?
-            """, (nombre, cedula, lugar, tipo, fecha_nac, id))
+            """, (nombre, cedula, lugar,  fecha_nac, tipo, id))
 
         db.commit()
         db.close()
