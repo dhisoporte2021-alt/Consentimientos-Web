@@ -741,6 +741,48 @@ def nuevo_consentimiento():
         enfermeros=enfermeros
     )
 
+@app.route("/plantillas_consentimiento/nuevo", methods=["GET", "POST"])
+def nueva_plantilla():
+    if "usuario" not in session:
+        return redirect("/login")
+
+    db = get_db()
+
+    # Obtener los paquetes y sedes
+    paquetes = db.execute("SELECT * FROM paquetes").fetchall()
+    sedes = db.execute("SELECT * FROM sedes").fetchall()
+
+    if request.method == "POST":
+        # Recibir los datos del formulario
+        nombre = request.form.get("nombre")
+        version = request.form.get("version")
+        fecha_version = request.form.get("fecha_version")
+        contenido = request.form.get("contenido")
+        paquete_id = request.form.get("paquete_id")
+        sede_id = request.form.get("sede_id")
+        titulo = request.form.get("titulo")
+
+
+        # Insertar la nueva plantilla
+        db.execute("""
+            INSERT INTO plantillas_consentimiento (
+                nombre, version, fecha_version, contenido, paquete_id, sede_id, created_at, titulo
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (nombre, version, fecha_version, contenido, paquete_id, sede_id, datetime.now().strftime("%Y-%m-%d"), titulo))
+
+        db.commit()
+        db.close()
+
+        return redirect("/plantillas_consentimiento")
+
+    db.close()
+
+    return render_template(
+        "/plantillas_consentimiento/nueva.html",
+        paquetes=paquetes,
+        sedes=sedes
+    )
+
 @app.route("/consentimientos/crear", methods=["POST"])
 def crear_consentimiento():
     if "usuario" not in session:
@@ -851,7 +893,7 @@ def descargar_consentimiento(id):
 
     return send_file(consentimiento["archivo_generado"], as_attachment=True)
 ## CRUD PAQUETES
-@app.route("/paquetes")
+@app.route("/   ")
 def paquetes_lista():
     if "usuario" not in session:
         return redirect("/login")

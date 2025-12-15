@@ -125,6 +125,50 @@ def init_db():
         FOREIGN KEY (acudiente_id) REFERENCES acudientes(id)
     )
     """)
+    cursor.execute("""
+    CREATE TABLE consentimiento_secciones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    consentimiento_id INTEGER,
+    tipo TEXT,               
+    contenido TEXT,          
+    orden INTEGER,
+    activo INTEGER DEFAULT 1,
+    FOREIGN KEY (consentimiento_id) REFERENCES consentimientos_definicion(id)
+);
+    """)
+    
+    cursor.execute("""
+    CREATE TABLE consentimientos_definicion (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    paquete_id INTEGER,
+    nombre TEXT NOT NULL,
+    
+    consentimiento_id INTEGER,
+    tipo TEXT,               
+    contenido TEXT,          
+    orden INTEGER,
+    activo INTEGER DEFAULT 1,
+    FOREIGN KEY (consentimiento_id) REFERENCES consentimientos_definicion(id)
+);
+    """)
+    cursor.execute("""
+    CREATE TABLE consentimientos_definicion (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    paquete_id INTEGER,
+    nombre TEXT NOT NULL,
+    version TEXT NOT NULL,
+    fecha_version TEXT NOT NULL,
+    sede_id INTEGER,
+    contenido TEXT NOT NULL,   -- TEXTO LARGO
+    firma_paciente INTEGER DEFAULT 1,
+    firma_medico INTEGER DEFAULT 0,
+    firma_enfermero INTEGER DEFAULT 0,
+    activo INTEGER DEFAULT 1,
+    created_at TEXT
+);  
+""")
+
+        
 
     conn.commit()
     conn.close()

@@ -62,3 +62,28 @@ function abrirModalPaciente(id, nombre, documento, ciudad) {
 
   document.getElementById("modalPaciente").classList.remove("hidden");
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('user-menu-button');
+      const menu = document.getElementById('user-menu');
+
+        // Función para alternar la visibilidad
+        function toggleMenu() {
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        }
+
+        // 1. Mostrar/Ocultar al hacer clic en el botón
+        button.addEventListener('click', toggleMenu);
+
+        // 2. Ocultar el menú al hacer clic fuera de él
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('user-menu-container');
+            if (container && !container.contains(event.target) && menu.style.display === 'block') {
+                menu.style.display = 'none';
+            }
+      });
+  });
