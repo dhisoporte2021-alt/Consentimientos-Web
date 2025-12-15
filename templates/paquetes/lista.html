@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<h1 class="text-2xl font-bold mb-4">Paquetes de Consentimientos</h1>
+
+<a href="/paquetes/crear" class="bg-blue-600 text-white px-4 py-2 rounded">
+    Crear paquete
+</a>
+
+<table class="w-full mt-4 border">
+    <tr class="bg-gray-100">
+        <th class="p-2">Nombre</th>
+        <th class="p-2">Estado</th>
+        <th class="p-2">Acciones</th>
+    </tr>
+
+    {% for p in paquetes %}
+    <tr class="border-t">
+        <td class="p-2">{{ p.nombre }}</td>
+        <td class="p-2">
+            {{ "Activo" if p.activo else "Inactivo" }}
+        </td>
+        <td class="p-2">
+            <a href="/paquetes/editar/{{ p.id }}" class="text-blue-600">
+                Editar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

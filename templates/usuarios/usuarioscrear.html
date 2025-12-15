@@ -1,28 +1,45 @@
 {% extends "base.html" %}
 {% block contenido %}
 
-<div class="max-w-lg mx-auto bg-white p-8 shadow rounded mt-10">
-    <h2 class="text-xl font-bold mb-6">Editar usuario</h2>
 
-    <form method="POST">
-        <label class="block mb-2">Nombre</label>
-        <input type="text" name="nombre" value="{{ usuario.nombre }}" class="w-full border p-2 rounded mb-4">
+<div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">Crear Usuarios</h1>
 
-        <label class="block mb-2">Email</label>
-        <input type="email" name="email" value="{{ usuario.email }}" class="w-full border p-2 rounded mb-4">
+    <form method="POST" action="/usuarios/crear" enctype="multipart/form-data"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+            <input class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500" name="nombre"
+                required />
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500" name="email"
+                required />
+        </div>
 
-        <label class="block mb-2">Usuario</label>
-        <input type="text" name="usuario" value="{{ usuario.usuario }}" class="w-full border p-2 rounded mb-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Usuario</label>
+            <input name="usuario" class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Rol</label>
+            <select name="rol" class="border p-2 rounded w-full">
+                <option value="usuario">Usuario</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+            <input type="password" class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+                name="password" required />
+        </div>
 
-        <label class="block mb-2">Rol</label>
-        <select name="rol" class="w-full border p-2 rounded mb-6">
-            <option value="usuario" {% if usuario.rol == "usuario" %}selected{% endif %}>Usuario</option>
-            <option value="admin" {% if usuario.rol == "admin" %}selected{% endif %}>Administrador</option>
-        </select>
-
-        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Actualizar
-        </button>
+        <div class="md:col-span-2">
+            <button
+                class="w-full md:w-auto md:float-right bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-150 ease-in-out">
+                Guardar
+            </button>
     </form>
 </div>
 

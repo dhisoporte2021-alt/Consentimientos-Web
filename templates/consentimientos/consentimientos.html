@@ -7,23 +7,23 @@
 
   <!-- Buscador -->
   <div class="relative max-w-lg">
-    <input id="buscarInput" 
-           type="text"
-           placeholder="Escriba nombre o cédula del paciente..."
-           class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-    <a href="/formulario" class="bg-neutral-primary-soft block  border border-default rounded-base shadow-xs transition hover:bg-gray-200"></a>
+    <input id="buscarInput" type="text" placeholder="Escriba nombre o cédula del paciente..."
+      class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <a href="/formulario"
+      class="bg-neutral-primary-soft block  border border-default rounded-base shadow-xs transition hover:bg-gray-200"></a>
     <!-- Resultados dinámicos -->
-    <div id="resultados" 
-         class="absolute bg-white border rounded-lg mt-1 w-full shadow hidden z-10">
+    <div id="resultados" class="absolute bg-white border rounded-lg mt-1 w-full shadow hidden z-10">
     </div>
-    
+
   </div>
 
   <!-- Botón de prueba manual -->
   <div class="mt-6">
-    <a href="/pacientes/agregar">agregar pacientes</a>
-    <button onclick="abrirModalPaciente(1, 'Juan Pérez', 'CC', '123456789', 'Bogotá')" 
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <a class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" href="/pacientes/agregar">agregar
+      pacientes</a>
+    <a class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" href="/consentimientos/nuevo">nuevo</a>
+    <button onclick="abrirModalPaciente(1, 'Juan Pérez', 'CC', '123456789', 'Bogotá')"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
       🔍 Probar Modales
     </button>
   </div>
@@ -31,8 +31,7 @@
 </div>
 
 <!-- ===================== MODAL 1 — DATOS DEL PACIENTE ===================== -->
-<div id="modalPaciente" 
-     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="modalPaciente" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
   <div class="bg-white rounded-lg w-96 p-6 shadow-lg relative">
     <h2 class="text-xl font-semibold mb-4">Datos del Paciente</h2>
 
@@ -44,12 +43,10 @@
     </div>
 
     <div class="flex justify-end mt-5 gap-3">
-      <button onclick="cerrarModal('modalPaciente')" 
-              class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100">
+      <button onclick="cerrarModal('modalPaciente')" class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100">
         Cerrar
       </button>
-      <button onclick="abrirModalFirma()" 
-              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+      <button onclick="abrirModalFirma()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
         Firmar
       </button>
     </div>
@@ -57,15 +54,13 @@
 </div>
 
 <!-- ===================== MODAL 2 — FIRMA ===================== -->
-<div id="modalFirma" 
-     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="modalFirma" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
   <div class="bg-white rounded-lg w-[500px] p-6 shadow-lg relative">
     <h2 class="text-xl font-semibold mb-4">Firma del Paciente</h2>
 
     <p class="text-gray-600 text-sm mb-3">Use una tableta o el mouse para firmar:</p>
 
-    <canvas id="canvasFirma" 
-            class="border w-full h-48 rounded mb-3"></canvas>
+    <canvas id="canvasFirma" class="border w-full h-48 rounded mb-3"></canvas>
 
     <div class="flex justify-between items-center">
       <input type="file" id="firmaArchivo" accept="image/*" class="text-sm">
@@ -73,14 +68,13 @@
     </div>
 
     <div class="flex justify-end mt-5 gap-3">
-      <button onclick="cerrarModal('modalFirma')" 
-              class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100">
+      <button onclick="cerrarModal('modalFirma')" class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100">
         Cancelar
       </button>
-      <button onclick="guardarFirma()" 
-              class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+      <button onclick="guardarFirma()" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
         Guardar Firma
       </button>
+
     </div>
   </div>
 </div>

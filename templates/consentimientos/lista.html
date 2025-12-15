@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">Consentimientos Generados</h1>
+
+    <table class="w-full border">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border p-2">Fecha</th>
+                <th class="border p-2">Paciente</th>
+                <th class="border p-2">Doctor</th>
+                <th class="border p-2">Plantilla</th>
+                <th class="border p-2">Archivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in consentimientos %}
+            <tr>
+                <td class="border p-2">{{ c.fecha }}</td>
+                <td class="border p-2">{{ c.paciente or "—" }}</td>
+                <td class="border p-2">{{ c.doctor or "—" }}</td>
+                <td class="border p-2">{{ c.plantilla_usada }}</td>
+                <td class="border p-2 text-center">
+                    <a href="/descargar/{{ c.id }}" class="text-blue-600 hover:underline">
+                        Descargar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

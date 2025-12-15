@@ -8,6 +8,25 @@ def get_db():
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
+
+    # ======================
+    # SEDES
+    # ======================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sedes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        logo TEXT,
+        ciudad TEXT,
+        direccion TEXT,
+        telefono TEXT,
+        activo INTEGER DEFAULT 1
+    )
+    """)
+
+    # ======================
+    # USUARIOS
+    # ======================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,36 +34,45 @@ def init_db():
         email TEXT NOT NULL UNIQUE,
         usuario TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        rol TEXT DEFAULT 'usuario'  -- puede ser 'admin' o 'usuario'
+        rol TEXT DEFAULT 'usuario',
+        sede_id INTEGER NOT NULL,
+        FOREIGN KEY (sede_id) REFERENCES sedes(id)
     )
-""")
+    """)
 
-    # Personal (doctores / enfermeros)
+    # ======================
+    # PERSONAL (doctores / enfermeros)
+    # ======================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS personal (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
         tipo TEXT NOT NULL,   -- doctor o enfermero
         cedula TEXT,
-        firma TEXT
+        firma TEXT,
+        sede_id INTEGER NOT NULL,
+        FOREIGN KEY (sede_id) REFERENCES sedes(id)
     )
-""")
-    
-
-    # Pacientes
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS pacientes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            cedula TEXT NOT NULL UNIQUE,
-            tipo_documento TEXT,
-            lugar_expedicion TEXT,
-            fecha_nacimiento TEXT,
-            firma TEXT
-        )
     """)
 
-    # Acudientes
+    # ======================
+    # PACIENTES
+    # ======================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS pacientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        cedula TEXT NOT NULL UNIQUE,
+        tipo_documento TEXT,
+        lugar_expedicion TEXT,
+        fecha_nacimiento TEXT,
+        firma TEXT
+    )
+    """)
+
+    # ======================
+    # ACUDIENTES
+    # ======================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS acudientes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,9 +84,11 @@ def init_db():
         firma_acudiente TEXT,
         FOREIGN KEY (paciente_id) REFERENCES pacientes(id)
     )
-""")
+    """)
 
-    # Menores de edad
+    # ======================
+    # MENORES DE EDAD
+    # ======================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS menores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,26 +100,30 @@ def init_db():
         firma_menor TEXT,
         FOREIGN KEY (paciente_id) REFERENCES pacientes(id)
     )
-""")
+    """)
 
-    # Historial de consentimientos
+    # ======================
+    # CONSENTIMIENTOS GENERADOS (HISTORIAL)
+    # ======================
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS consentimientos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fecha TEXT,
-            paciente_id INTEGER,
-            doctor_id INTEGER,
-            enfermero_id INTEGER,
-            menor_id INTEGER,
-            acudiente_id INTEGER,
-            plantilla_usada TEXT,
-            archivo_generado TEXT,
-            FOREIGN KEY(paciente_id) REFERENCES pacientes(id),
-            FOREIGN KEY(doctor_id) REFERENCES personal(id),
-            FOREIGN KEY(enfermero_id) REFERENCES personal(id),
-            FOREIGN KEY(menor_id) REFERENCES menores(id),
-            FOREIGN KEY(acudiente_id) REFERENCES acudientes(id)
-        )
+    CREATE TABLE IF NOT EXISTS consentimientos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fecha TEXT NOT NULL,
+        sede_id INTEGER NOT NULL,
+        paciente_id INTEGER NOT NULL,
+        doctor_id INTEGER,
+        enfermero_id INTEGER,
+        menor_id INTEGER,
+        acudiente_id INTEGER,
+        plantilla_usada TEXT,
+        archivo_generado TEXT,
+        FOREIGN KEY (sede_id) REFERENCES sedes(id),
+        FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
+        FOREIGN KEY (doctor_id) REFERENCES personal(id),
+        FOREIGN KEY (enfermero_id) REFERENCES personal(id),
+        FOREIGN KEY (menor_id) REFERENCES menores(id),
+        FOREIGN KEY (acudiente_id) REFERENCES acudientes(id)
+    )
     """)
 
     conn.commit()

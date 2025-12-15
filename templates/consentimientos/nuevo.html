@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6">Nuevo consentimiento</h1>
+
+    <!-- ========================= -->
+    <!-- BUSCAR PACIENTE -->
+    <!-- ========================= -->
+    <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700">
+            Buscar paciente
+        </label>
+
+        <input type="text" id="buscarInput" placeholder="Nombre o cédula..." class="w-full border p-2 rounded"
+            autocomplete="off" />
+
+        <div id="resultados" class="border mt-1 rounded bg-white hidden max-h-48 overflow-y-auto"></div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- PACIENTE SELECCIONADO -->
+    <!-- ========================= -->
+    <div id="modalPaciente" class="hidden border rounded p-4 mb-6 bg-blue-50">
+        <h2 class="font-semibold mb-2">Paciente seleccionado</h2>
+        <p><strong>Nombre:</strong> <span id="pacienteNombre"></span></p>
+        <p><strong>Documento:</strong> <span id="pacienteDocumento"></span></p>
+        <p><strong>Ciudad:</strong> <span id="pacienteCiudad"></span></p>
+    </div>
+
+    <!-- ========================= -->
+    <!-- FORMULARIO -->
+    <!-- ========================= -->
+    <form method="POST" action="/consentimientos/crear" enctype="multipart/form-data">
+
+        <!-- ESTE INPUT ES CLAVE -->
+        <input type="hidden" name="paciente_id" id="paciente_id">
+
+        <!-- DOCTOR -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium">Doctor</label>
+            <select name="doctor_id" class="w-full border p-2 rounded">
+                <option value="">Seleccione</option>
+                {% for d in doctores %}
+                <option value="{{ d.id }}">{{ d.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- ENFERMERO -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium">Enfermero</label>
+            <select name="enfermero_id" class="w-full border p-2 rounded">
+                <option value="">Seleccione</option>
+                {% for e in enfermeros %}
+                <option value="{{ e.id }}">{{ e.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium">Fecha</label>
+            <input type="date" name="fecha" class="w-full border p-2 rounded">
+
+        </div>
+        <!-- PLANTILLA -->
+
+
+        <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+            Generar consentimiento
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}
