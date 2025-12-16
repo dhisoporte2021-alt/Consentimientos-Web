@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div class="max-auto bg-white p-6 rounded shadow">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Plantillas de Consentimiento</h1>
+
+        <a href="/plantillas_consentimiento/nuevo"
+           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Nueva plantilla
+        </a>
+    </div>
+
+    <table class="w-full  text-sm">
+        <thead class="bg-gray-100 ">
+            <tr>
+                <th class="border text-center p-2">ID</th>
+                <th class="border text-center p-2">Nombre</th>
+                <th class="border text-center p-2">Título</th>
+                <th class="border text-center p-2">Versión</th>
+                <th class="border text-center p-2">Paquete</th>
+                <th class="border text-center p-2">Sede</th>
+                <th class="border text-center p-2">Fecha</th>
+                <th class="border text-center p-2">Estado</th>
+                <th class="border text-center p-2">Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for p in plantillas %}
+            <tr class="hover:bg-gray-50">
+                <td class="border p-2 text-center">{{ p.id }}</td>
+                <td class="border p-2 text-center">{{ p.nombre }}</td>
+                <td class="border p-2 text-center">{{ p.titulo }}</td>
+                <td class="border p-2 text-center">{{ p.version }}</td>
+                <td class="border p-2 text-center" >{{ p.paquete or "-" }}</td>
+                <td class="border p-2 text-center">{{ p.sede or "-" }}</td>
+                <td class="border p-2 text-center">{{ p.fecha_version }}</td>
+
+                <td class="border p-2 text-center">
+                    {% if p.activo %}
+                        <span class="text-green-600 font-semibold">Activa</span>
+                    {% else %}
+                        <span class="text-red-600 font-semibold">Inactiva</span>
+                    {% endif %}
+                </td>
+
+                <td class="border p-2 text-center space-x-2">
+                    <a href="/plantillas_consentimiento/ver/{{ p.id }}"
+                       class="text-blue-600 hover:underline">Ver</a>
+
+                    <a href="/plantillas_consentimiento/editar/{{ p.id }}"
+                       class="text-yellow-600 hover:underline">Editar</a>
+
+                    {% if p.activo %}
+                        <a href="/plantillas_consentimiento/desactivar/{{ p.id }}"
+                           class="text-red-600 hover:underline"
+                           onclick="return confirm('¿Desactivar plantilla?')">
+                           Desactivar
+                        </a>
+                    {% else %}
+                        <a href="/plantillas_consentimiento/activar/{{ p.id }}"
+                           class="text-green-600 hover:underline">
+                           Activar
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

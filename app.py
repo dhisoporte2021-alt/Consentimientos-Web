@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session, abort
+from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session, abort, make_response
 import sqlite3
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -9,7 +9,7 @@ from datetime import datetime
 from database import get_db
 import json
 import base64
-
+from weasyprint import HTML
 
 
 app = Flask(__name__)
@@ -78,7 +78,7 @@ def crear_usuario():
     sedes = cursor.fetchall()
     conn.close()
 
-    return render_template("crear_usuario.html", sedes=sedes)
+    return render_template("/usuarios/usuarioscrear.html", sedes=sedes)
 
 
 ##LISTAR USUARIOS
@@ -105,7 +105,7 @@ def listar_usuarios():
     usuarios = cursor.fetchall()
     conn.close()
 
-    return render_template("usuarios.html", usuarios=usuarios)
+    return render_template("/usuarios/usuarioslista.html", usuarios=usuarios)
 
 
 ##EDITAR USUARIOS
@@ -144,7 +144,7 @@ def editar_usuario(id):
         return redirect("/usuarios")
 
     conn.close()
-    return render_template("usuarioseditar.html", usuario=usuario)
+    return render_template("/usuarios/usuarioseditar.html", usuario=usuario)
 
 
 ##ELIMINAR USUARIOS
@@ -310,6 +310,7 @@ def generar():
     # ==============================
     # GUARDAR HISTORIAL EN BD
     # ==============================
+    plantilla_id = datos.get("plantilla_id")
     db.execute("""
         INSERT INTO consentimientos (
             fecha,
@@ -326,7 +327,7 @@ def generar():
         datos.get("paciente_id"),
         doctor_id if doctor_id else None,
         enfermero_id if enfermero_id else None,
-        datos["plantilla"],
+        f"{plantilla_id} | {datos['plantilla']}",
         salida
     ))
 
@@ -442,6 +443,8 @@ def personal_editar(id):
 # ELIMINAR
 @app.route("/personal/eliminar/<int:id>")
 def personal_eliminar(id):
+   
+    
     if "usuario" not in session or session["rol"] != "admin":
         return redirect("/login")
 
@@ -470,6 +473,8 @@ def personal_eliminar(id):
 
 @app.route("/pacientes")
 def pacientes_lista():
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
     data = db.execute("SELECT * FROM pacientes ORDER BY nombre").fetchall()
     db.close()
@@ -478,6 +483,9 @@ def pacientes_lista():
 
 @app.route("/pacientes/agregar", methods=["GET", "POST"])
 def pacientes_agregar():
+    if "usuario" not in session:
+        return redirect("/login")
+    
     if request.method == "POST":
         nombre = request.form["nombre"]
         cedula = request.form["cedula"]
@@ -508,6 +516,8 @@ def pacientes_agregar():
 
 @app.route("/pacientes/editar/<int:id>", methods=["GET", "POST"])
 def pacientes_editar(id):
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
 
     if request.method == "POST":
@@ -548,6 +558,8 @@ def pacientes_editar(id):
 
 @app.route("/pacientes/eliminar/<int:id>")
 def pacientes_eliminar(id):
+    if "usuario" not in session or session["rol"] != "admin":
+        return redirect("/login")
     db = get_db()
     db.execute("DELETE FROM pacientes WHERE id=?", (id,))
     db.commit()
@@ -555,31 +567,10 @@ def pacientes_eliminar(id):
     return redirect(url_for("pacientes_lista"))
 
 
-@app.route("/buscar_pacientes")
-def buscar_pacientes():
-    termino = request.args.get("q", "").strip()
-
-    if termino == "":
-        return jsonify([])
-
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT id, nombre, tipo_documento, cedula, lugar_expedicion
-        FROM pacientes
-        WHERE cedula LIKE ? OR nombre LIKE ?
-        ORDER BY nombre ASC
-        LIMIT 20
-    """, (f"%{termino}%", f"%{termino}%"))
-
-    resultados = [dict(row) for row in cur.fetchall()]
-    conn.close()
-
-    return jsonify(resultados)
-
 @app.route("/api/buscar_paciente")
 def api_buscar_paciente():
+    if "usuario" not in session:
+        return redirect("/login")
     query = request.args.get("query", "").strip()
 
     if not query:
@@ -607,11 +598,94 @@ def api_buscar_paciente():
 
     return {"result": pacientes}
 
+@app.route("/api/plantillas_por_paquete/<int:paquete_id>")
+def plantillas_por_paquete(paquete_id):
+    if "usuario" not in session:
+        return {"error": "unauthorized"}, 401
 
+    db = get_db()
+    plantillas = db.execute("""
+        SELECT id, nombre, titulo, version
+        FROM plantillas_consentimiento
+        WHERE paquete_id = ?
+        ORDER BY nombre
+    """, (paquete_id,)).fetchall()
+    db.close()
+
+    return {
+        "result": [
+            {
+                "id": p["id"],
+                "nombre": p["nombre"],
+                "titulo": p["titulo"],
+                "version": p["version"]
+            } for p in plantillas
+        ]
+    }
+
+@app.route("/consentimientos/generar_pdf")
+def generar_consentimiento_pdf():
+    if "usuario" not in session:
+        return redirect("/login")
+
+    plantilla_id = request.args.get("plantilla_id")
+    paciente_id = request.args.get("paciente_id")
+    doctor_id = request.args.get("doctor_id")
+    enfermero_id = request.args.get("enfermero_id")
+    fecha = request.args.get("fecha")
+
+    if not fecha:
+        fecha = datetime.now().strftime("%Y-%m-%d")
+
+    db = get_db()
+
+    plantilla = db.execute("""
+        SELECT * FROM plantillas_consentimiento WHERE id=?
+    """, (plantilla_id,)).fetchone()
+
+    paciente = db.execute("""
+        SELECT * FROM pacientes WHERE id=?
+    """, (paciente_id,)).fetchone()
+
+    doctor = db.execute("""
+        SELECT * FROM personal WHERE id=?
+    """, (doctor_id,)).fetchone() if doctor_id else None
+
+    enfermero = db.execute("""
+        SELECT * FROM personal WHERE id=?
+    """, (enfermero_id,)).fetchone() if enfermero_id else None
+
+    sede = db.execute("""
+        SELECT * FROM sedes WHERE id=?
+    """, (session["sede_id"],)).fetchone()
+
+    db.close()
+
+    html = render_template(
+        "consentimientos/pdf.html",
+        plantilla=plantilla,
+        paciente=paciente,
+        doctor=doctor,
+        enfermero=enfermero,
+        sede=sede,
+        fecha=fecha
+    )
+
+    pdf = HTML(string=html).write_pdf()
+
+    response = make_response(pdf)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename=Consentimiento_{paciente['nombre']}.pdf"
+    )
+
+    return response
 #MENOR DE EDAD 
 
 @app.route("/menores")
 def menores_lista():
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
     data = db.execute("""
         SELECT m.*, p.nombre AS nombre_paciente
@@ -623,6 +697,8 @@ def menores_lista():
 
 @app.route("/menores/nuevo", methods=["GET", "POST"])
 def menores_nuevo():
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
 
     # Obtener lista de pacientes
@@ -650,6 +726,8 @@ def menores_nuevo():
 
 @app.route("/acudientes")
 def acudientes_lista():
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
     data = db.execute("""
         SELECT a.*, p.nombre AS nombre_paciente
@@ -661,6 +739,8 @@ def acudientes_lista():
 
 @app.route("/acudientes/nuevo", methods=["GET", "POST"])
 def acudientes_nuevo():
+    if "usuario" not in session:
+        return redirect("/login")
     db = get_db()
 
     # lista de pacientes
@@ -689,12 +769,14 @@ def acudientes_nuevo():
 
 @app.route("/admin")
 def admin():
+    if "usuario" not in session or session["rol"] != "admin":
+        return redirect("/login")
     return render_template("admin.html")
 
 ## LISTAR CONSENTIMIENTOS
 @app.route("/consentimientos/lista")
 def listar_consentimientos():
-    if "usuario" not in session:
+    if "usuario" not in session or session["rol"] != "admin":
         return redirect("/login")
 
     db = get_db()
@@ -718,7 +800,8 @@ def listar_consentimientos():
 
 @app.route("/consentimientos/nuevo")
 def nuevo_consentimiento():
-    if "usuario" not in session:
+    
+    if "usuario" not in session or session["rol"] != "admin":
         return redirect("/login")
 
     db = get_db()
@@ -740,10 +823,11 @@ def nuevo_consentimiento():
         doctores=doctores,
         enfermeros=enfermeros
     )
-
+## crud PLANTILLAS DE CONSENTIMIENTOS
 @app.route("/plantillas_consentimiento/nuevo", methods=["GET", "POST"])
 def nueva_plantilla():
-    if "usuario" not in session:
+    
+    if "usuario" not in session or session["rol"] != "admin":
         return redirect("/login")
 
     db = get_db()
@@ -772,8 +856,9 @@ def nueva_plantilla():
 
         db.commit()
         db.close()
-
-        return redirect("/plantillas_consentimiento")
+        if nombre == "":
+            print("Plantilla no fue creada:", nombre)
+        # return redirect("/plantillas_consentimiento/lista.html")
 
     db.close()
 
@@ -782,6 +867,64 @@ def nueva_plantilla():
         paquetes=paquetes,
         sedes=sedes
     )
+    ##LISTA DE PLANTILLAS DE CONSENTIMIENTOS
+@app.route("/plantillas_consentimiento")
+def listar_plantillas():
+    
+    if "usuario" not in session or session["rol"] != "admin":
+        return redirect("/login")
+
+    db = get_db()
+
+    plantillas = db.execute("""
+        SELECT 
+            pc.id,
+            pc.nombre,
+            pc.titulo,
+            pc.version,
+            pc.fecha_version,
+            pc.activo,
+            p.nombre AS paquete,
+            s.nombre AS sede
+        FROM plantillas_consentimiento pc
+        LEFT JOIN paquetes p ON pc.paquete_id = p.id
+        LEFT JOIN sedes s ON pc.sede_id = s.id
+        ORDER BY pc.created_at DESC
+    """).fetchall()
+
+    db.close()
+
+    return render_template(
+        "plantillas_consentimiento/lista.html",
+        plantillas=plantillas
+    )
+    
+    ## DESACTIVAR PLANTILLA
+@app.route("/plantillas_consentimiento/desactivar/<int:id>")
+def desactivar_plantilla(id):
+    
+    if "usuario" not in session or session["rol"] != "admin":
+        return redirect("/login")
+
+    db = get_db()
+    db.execute("UPDATE plantillas_consentimiento SET activo=0 WHERE id=?", (id,))
+    db.commit()
+    db.close()
+
+    return redirect("/plantillas_consentimiento")
+## ACTIVAR PLANTILLA
+@app.route("/plantillas_consentimiento/activar/<int:id>")
+def activar_plantilla(id):
+    
+    if "usuario" not in session or session["rol"] != "admin":
+        return redirect("/login")
+
+    db = get_db()
+    db.execute("UPDATE plantillas_consentimiento SET activo=1 WHERE id=?", (id,))
+    db.commit()
+    db.close()
+
+    return redirect("/plantillas_consentimiento")
 
 @app.route("/consentimientos/crear", methods=["POST"])
 def crear_consentimiento():
@@ -878,6 +1021,7 @@ def crear_consentimiento():
 
 @app.route("/descargar/<int:id>")
 def descargar_consentimiento(id):
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -895,6 +1039,7 @@ def descargar_consentimiento(id):
 ## CRUD PAQUETES
 @app.route("/   ")
 def paquetes_lista():
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -909,6 +1054,7 @@ def paquetes_lista():
 
 @app.route("/paquetes/crear", methods=["GET", "POST"])
 def paquetes_crear():
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -929,6 +1075,7 @@ def paquetes_crear():
     return render_template("paquetes/crear.html")
 @app.route("/paquetes/editar/<int:id>", methods=["GET", "POST"])
 def paquetes_editar(id):
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -963,6 +1110,7 @@ def paquetes_editar(id):
 ##CRUD PLANTILLAS 
 @app.route("/plantillas/<int:paquete_id>")
 def plantillas_lista(paquete_id):
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -988,8 +1136,10 @@ def plantillas_lista(paquete_id):
         paquete=paquete,
         plantillas=plantillas
     )
+    
 @app.route("/plantillas/crear/<int:paquete_id>", methods=["GET", "POST"])
 def plantillas_crear(paquete_id):
+    
     if "usuario" not in session:
         return redirect("/login")
 
@@ -1033,6 +1183,7 @@ def plantillas_crear(paquete_id):
 
 @app.route("/plantillas/editar/<int:id>", methods=["GET", "POST"])
 def plantillas_editar(id):
+    
     if "usuario" not in session:
         return redirect("/login")
 

@@ -16,16 +16,125 @@
       href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css"
       rel="stylesheet"
     />
+    <script src="https://unpkg.com/flowbite@latest/dist/flowbite.min.js"></script>
   </head>
   <body class="bg-gray-100">
-    <!-- <nav class="bg-blue-600 text-white py-4 px-6 mb-6">
-        <div class="text-xl font-bold">Consentimientos Médicos</div>
-    </nav> -->
-    <nav class="relative mb-5 p-2 bg-[#FFFFFF]">
+  
+  <!-- <button data-drawer-target="sidebar-multi-level-sidebar"
+        data-drawer-toggle="sidebar-multi-level-sidebar"
+        aria-controls="sidebar-multi-level-sidebar"
+        type="button"
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm rounded-lg sm:hidden
+               hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
+    <span class="sr-only">Abrir menú</span>
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-width="2"
+              d="M5 7h14M5 12h14M5 17h10"/>
+    </svg>
+</button> -->
+
+
+<aside id="sidebar-multi-level-sidebar"
+       class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform
+              -translate-x-full sm:translate-x-0"
+       aria-label="Sidebar">
+
+    <div class="h-full px-3 py-4 overflow-y-auto bg-white border-r">
+
+        <!-- LOGO / NOMBRE -->
+        <h1 class="text-center ">
+                <img src="{{ url_for('static', filename='img/LOGO DHI_Mesa de trabajo 1 copia.svg') }}" alt="Logo DHI"
+                  class="w-[130px] h-auto mx-auto" />
+        </h1>
+
+        <!-- MENU -->
+        <ul class="space-y-2 font-medium mt-3">
+            <!-- DASHBOARD -->
+            <li>
+                <a href="/"
+                   class="flex items-center px-2 py-1.5 rounded hover:bg-[#E0F3F2]">
+                    <span class="ms-3">Inicio</span>
+                </a>
+            </li>
+
+            <!-- CONSENTIMIENTOS -->
+            <li>
+                <button type="button"
+                        class="flex items-center w-full px-2 py-1.5 rounded hover:bg-[#E0F3F2] justify-between"
+                        data-collapse-toggle="dropdown-consentimientos">
+                    <span class="ms-3">Consentimientos</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-width="2"
+                              d="m19 9-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <ul id="dropdown-consentimientos" class="hidden py-2 space-y-1">
+                    <li>
+                        <a href="/consentimientos"
+                           class="block pl-10 py-1 hover:bg-[#E0F3F2] rounded">
+                           Crear Consentimiento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/consentimientos/nuevo"
+                           class="block pl-10 py-1 hover:bg-[#E0F3F2] rounded">
+                           Nueva Plantilla
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- PLANTILLAS -->
+            <li>
+                <a href="/plantillas_consentimiento"
+                   class="flex items-center px-2 py-1.5 rounded hover:bg-[#E0F3F2]">
+                    <span class="ms-3">Plantillas</span>
+                </a>
+            </li>
+
+            <!-- PACIENTES -->
+            <li>
+                <a href="/pacientes"
+                   class="flex items-center px-2 py-1.5 rounded hover:bg-[#E0F3F2]">
+                    <span class="ms-3">Pacientes</span>
+                </a>
+            </li>
+
+            <!-- USUARIOS -->
+            <li>
+                <a href="/usuarios"
+                   class="flex items-center px-2 py-1.5 rounded hover:bg-[#E0F3F2]">
+                    <span class="ms-3">Usuarios</span>
+                </a>
+            </li>
+
+            <!-- SALIR -->
+            <li class="pt-4 border-t">
+                <a href="/login"
+                   class="flex items-center px-2 py-1.5 text-red-600 hover:bg-red-50 rounded">
+                    <span class="ms-3">Cerrar sesión</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</aside>
+
+
+    <div class="sm:ml-64 p-6">
+      {% block contenido %}{% endblock %}
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/flatpickr.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+  </body>
+</html>
+
+    <!-- <nav class="relative mb-5 p-2 bg-[#FFFFFF]">
       <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
           <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <!-- Mobile menu button-->
+           
             <button
               type="button"
               command="--toggle"
@@ -80,7 +189,7 @@
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
-                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
+              
                 <a
                   href="/"
                   aria-current="page"
@@ -123,7 +232,7 @@
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </a>
 
-            <!-- Profile dropdown -->
+           
             <div class="relative ml-3" id="user-menu-container">
               <div>
                 <button
@@ -147,18 +256,18 @@
                 style="display: none"
               >
                 <a
-                  href="#"
+                  href="/personal"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
                   tabindex="-1"
-                  >Tu Perfil</a
+                  >Medicos</a
                 >
                 <a
-                  href="#"
+                  href="/plantillas_consentimiento"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
                   tabindex="-1"
-                  >Configuración</a
+                  >Consentimientos</a
                 >
                 <a
                   href="#"
@@ -224,7 +333,7 @@
 
       <el-disclosure id="mobile-menu" hidden class="block sm:hidden">
         <div class="space-y-1 px-2 pt-2 pb-3">
-          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
+          
           <a
             href="/"
             aria-current="page"
@@ -248,13 +357,6 @@
           >
         </div>
       </el-disclosure>
-    </nav>
+    </nav> -->
+    
 
-    <div class="container mx-auto p-6 bg-white shadow rounded">
-      {% block contenido %}{% endblock %}
-    </div>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/flatpickr.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-  </body>
-</html>

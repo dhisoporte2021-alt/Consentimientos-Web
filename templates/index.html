@@ -1,15 +1,15 @@
 {% extends "base.html" %} {% block contenido %}
-<div>
+<div class=" mx-auto bg-white p-6 rounded shadow ">
   <h1 class="text-2xl font-semibold mb-4">Panel de Control</h1>
   <h3 class="text-1xl font-semibold mb-4">
     Bienvenido al dashboard principal del sistema
     <br />
-    <br />
+    
   </h3>
   <div class="flex gap-4 h-96">
     <!-- CARD DE USUARIOS -->
     <!-- Nuevo código con efecto hover y animación -->
-    <a href="/personal" class="block">
+    <a href="/personal" class="h-40 block">
       <div class="flex justify-center">
         <div
           class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
@@ -42,7 +42,7 @@
 
     <!-- CARD DE CONSENTIMIENTOS -->
     <!-- Nuevo código con efecto hover y animación -->
-    <a href="/consentimientos" class="block">
+    <a href="/consentimientos" class="h-40 block">
       <div class="flex justify-center">
         <div
           class="relative group bg-white rounded-[1em] overflow-hidden p-4 z-0 min-w-[20em] w-fit min-h-[10em] pr-16 shadow-md transition-all duration-500"
@@ -72,6 +72,11 @@
         </div>
       </div>
     </a>
+    
+
+    
+
+    
   </div>
-  {% endblock %}
 </div>
+{% endblock %}

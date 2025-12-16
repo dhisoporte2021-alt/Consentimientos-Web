@@ -2,6 +2,7 @@
 
 {% block contenido %}
 
+<div class="max-auto bg-white p-6 rounded shadow">
 <h2 class="text-2xl font-bold mb-4">Personal (Médicos y Enfermeros)</h2>
 
 <a href="{{ url_for('personal_agregar') }}" 
@@ -49,5 +50,5 @@
         {% endfor %}
     </tbody>
 </table>
-
+</div>
 {% endblock %}

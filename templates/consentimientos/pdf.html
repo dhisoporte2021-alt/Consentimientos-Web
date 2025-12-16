@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 12px; }
+  .header { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 10px; }
+  .titulo { text-align: center; font-weight: bold; font-size: 14px; }
+  .contenido { margin-top: 20px; white-space: pre-line; }
+  .firmas { margin-top: 60px; display: flex; justify-content: space-between; }
+  .firma { width: 45%; text-align: center; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div>
+    <img src="{{ url_for('static', filename='img/logo.png') }}" width="120">
+  </div>
+  <div class="titulo">
+    {{ plantilla.titulo }}<br>
+    Versión {{ plantilla.version }}
+  </div>
+  <div>
+    Fecha: {{ fecha }}
+  </div>
+</div>
+
+<div class="contenido">
+  {{ plantilla.contenido }}
+</div>
+
+<p style="margin-top:30px;">
+  Ciudad: {{ paciente.lugar_expedicion }} — Fecha: {{ fecha }}
+</p>
+
+<div class="firmas">
+  <div class="firma">
+    ___________________________<br>
+    {{ paciente.nombre }}<br>
+    CC {{ paciente.cedula }}
+  </div>
+
+  {% if doctor %}
+  <div class="firma">
+    ___________________________<br>
+    {{ doctor.nombre }}<br>
+    {{ doctor.tipo|upper }}
+  </div>
+  {% elif enfermero %}
+  <div class="firma">
+    ___________________________<br>
+    {{ enfermero.nombre }}<br>
+    ENFERMERO
+  </div>
+  {% endif %}
+</div>
+
+</body>
+</html>
