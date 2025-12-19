@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block contenido %}
-
+<div class="max-auto bg-white p-6 rounded shadow">
 <h1 class="text-2xl font-bold mb-4">Paquetes de Consentimientos</h1>
 
 <a href="/paquetes/crear" class="bg-blue-600 text-white px-4 py-2 rounded">
@@ -9,18 +9,18 @@
 
 <table class="w-full mt-4 border">
     <tr class="bg-gray-100">
-        <th class="p-2">Nombre</th>
-        <th class="p-2">Estado</th>
-        <th class="p-2">Acciones</th>
+        <th class="p-2 text-center">Nombre</th>
+        <th class="p-2 text-center">Estado</th>
+        <th class="p-2 text-center">Acciones</th>
     </tr>
 
     {% for p in paquetes %}
     <tr class="border-t">
-        <td class="p-2">{{ p.nombre }}</td>
-        <td class="p-2">
+        <td class="p-2 text-center">{{ p.nombre }}</td>
+        <td class="p-2 text-center">
             {{ "Activo" if p.activo else "Inactivo" }}
         </td>
-        <td class="p-2">
+        <td class="p-2 text-center">
             <a href="/paquetes/editar/{{ p.id }}" class="text-blue-600">
                 Editar
             </a>
@@ -28,5 +28,5 @@
     </tr>
     {% endfor %}
 </table>
-
+</div>
 {% endblock %}

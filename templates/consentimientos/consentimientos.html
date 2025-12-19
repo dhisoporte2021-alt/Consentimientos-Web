@@ -65,43 +65,48 @@
       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
       🔍 Probar Modales
     </button> -->
-    <!-- AGRUPADOR PACIENTE + FIRMA -->
-<div id="bloquePaciente" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- AGRUPADOR PACIENTE + FIRMA -->
+      <div
+        id="bloquePaciente"
+        class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <!-- CARD PACIENTE -->
+        <div class="bg-white border rounded-lg p-4 shadow">
+          <h3 class="text-lg font-semibold mb-2">Paciente seleccionado</h3>
 
-  <!-- CARD PACIENTE -->
-  <div class="bg-white border rounded-lg p-4 shadow">
-    <h3 class="text-lg font-semibold mb-2">Paciente seleccionado</h3>
+          <p><strong>Nombre:</strong> <span id="p_nombre"></span></p>
+          <p><strong>Cédula:</strong> <span id="p_cedula"></span></p>
+          <p><strong>Ciudad:</strong> <span id="p_ciudad"></span></p>
 
-    <p><strong>Nombre:</strong> <span id="p_nombre"></span></p>
-    <p><strong>Cédula:</strong> <span id="p_cedula"></span></p>
-    <p><strong>Ciudad:</strong> <span id="p_ciudad"></span></p>
+          <input type="hidden" name="paciente_id" id="paciente_id" />
+        </div>
 
-    <input type="hidden" name="paciente_id" id="paciente_id">
-  </div>
+        <!-- FIRMA -->
+        <div class="bg-white border rounded-lg p-4 shadow">
+          <h3 class="text-lg font-semibold mb-2">Firma del paciente</h3>
 
-  <!-- FIRMA -->
-  <div class="bg-white border rounded-lg p-4 shadow">
-    <h3 class="text-lg font-semibold mb-2">Firma del paciente</h3>
+          <canvas id="firmaCanvas" class="border w-full h-40"></canvas>
 
-    <canvas id="firmaCanvas" class="border w-full h-40"></canvas>
+          <div class="flex gap-2 mt-3">
+            <button
+              type="button"
+              onclick="limpiarFirma()"
+              class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Limpiar
+            </button>
 
-    <div class="flex gap-2 mt-3">
-      <button type="button" onclick="limpiarFirma()"
-        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
-        Limpiar
-      </button>
+            <label
+              class="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer"
+            >
+              Subir firma
+              <input type="file" id="firmaUpload" accept="image/*" hidden />
+            </label>
+          </div>
 
-      <label class="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer">
-        Subir firma
-        <input type="file" id="firmaUpload" accept="image/*" hidden>
-      </label>
-    </div>
-
-    <input type="hidden" name="firma_paciente" id="firma_paciente">
-  </div>
-
-</div>
-
+          <input type="hidden" name="firma_paciente" id="firma_paciente" />
+        </div>
+      </div>
     </div>
 
     <!-- ===================== MODAL 1 — DATOS DEL PACIENTE ===================== -->
@@ -143,67 +148,71 @@
       </div>
     </div>
     <!-- CONFIGURACIÓN DEL CONSENTIMIENTO -->
-<div id="configConsentimiento" class="mt-8 bg-white border rounded-lg p-6 shadow">
+    <div
+      id="configConsentimiento"
+      class="mt-8 bg-white border rounded-lg p-6 shadow"
+    >
+      <h3 class="text-xl font-semibold mb-4">
+        Configuración del consentimiento
+      </h3>
 
-  <h3 class="text-xl font-semibold mb-4">Configuración del consentimiento</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- PAQUETE -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Paquete</label>
+          <select id="paquete_id" class="w-full border rounded p-2">
+            <option value="">Seleccione un paquete</option>
+            {% for p in paquetes %}
+            <option value="{{ p.id }}">{{ p.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- FECHA -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Fecha</label>
+          <input
+            type="date"
+            id="fecha_consentimiento"
+            class="w-full border rounded p-2"
+            value="{{ today }}"
+          />
+        </div>
 
-    <!-- PAQUETE -->
-    <div>
-      <label class="block text-sm font-medium mb-1">Paquete</label>
-      <select id="paquete_id" class="w-full border rounded p-2">
-        <option value="">Seleccione un paquete</option>
-        {% for p in paquetes %}
-          <option value="{{ p.id }}">{{ p.nombre }}</option>
-        {% endfor %}
-      </select>
+        <!-- DOCTOR -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Doctor</label>
+          <select id="doctor_id" class="w-full border rounded p-2">
+            <option value="">Seleccione</option>
+            {% for d in doctores %}
+            <option value="{{ d.id }}">{{ d.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- ENFERMERO -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Enfermero</label>
+          <select id="enfermero_id" class="w-full border rounded p-2">
+            <option value="">Seleccione</option>
+            {% for e in enfermeros %}
+            <option value="{{ e.id }}">{{ e.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- LISTA DE CONSENTIMIENTOS -->
+      <div class="mt-6">
+        <h4 class="font-semibold mb-2">Consentimientos disponibles</h4>
+        <div
+          id="listaConsentimientos"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          <p class="text-gray-500">Seleccione un paquete…</p>
+        </div>
+      </div>
     </div>
-
-    <!-- FECHA -->
-    <div>
-      <label class="block text-sm font-medium mb-1">Fecha</label>
-      <input
-        type="date"
-        id="fecha_consentimiento"
-        class="w-full border rounded p-2"
-        value="{{ today }}"
-      >
-    </div>
-
-    <!-- DOCTOR -->
-    <div>
-      <label class="block text-sm font-medium mb-1">Doctor</label>
-      <select id="doctor_id" class="w-full border rounded p-2">
-        <option value="">Seleccione</option>
-        {% for d in doctores %}
-          <option value="{{ d.id }}">{{ d.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <!-- ENFERMERO -->
-    <div>
-      <label class="block text-sm font-medium mb-1">Enfermero</label>
-      <select id="enfermero_id" class="w-full border rounded p-2">
-        <option value="">Seleccione</option>
-        {% for e in enfermeros %}
-          <option value="{{ e.id }}">{{ e.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-  </div>
-
-  <!-- LISTA DE CONSENTIMIENTOS -->
-  <div class="mt-6">
-    <h4 class="font-semibold mb-2">Consentimientos disponibles</h4>
-    <div id="listaConsentimientos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <p class="text-gray-500">Seleccione un paquete…</p>
-    </div>
-  </div>
-
-</div>
 
     <!-- ===================== MODAL 2 — FIRMA ===================== -->
     <div
@@ -254,55 +263,55 @@
       </div>
     </div>
   </div>
-  <!-- ===================== SCRIPTS ===================== -->
-  <!-- <script>
-function abrirModalPaciente(id, nombre, tipo, documento, ciudad) {
-  document.getElementById("pacienteNombre").textContent = nombre;
-  document.getElementById("pacienteTipo").textContent = tipo;
-  document.getElementById("pacienteDocumento").textContent = documento;
-  document.getElementById("pacienteCiudad").textContent = ciudad;
-  document.getElementById("modalPaciente").classList.remove("hidden");
-}
+  <!-- ===================== SCRIPTS ===================== ## -->
+  <script>
+    const paqueteSelect = document.getElementById("paqueteSelect");
+    const lista = document.getElementById("listaConsentimientos");
 
-function abrirModalFirma() {
-  document.getElementById("modalPaciente").classList.add("hidden");
-  document.getElementById("modalFirma").classList.remove("hidden");
-}
+    console.log("JS cargado", paqueteSelect);
 
-function cerrarModal(id) {
-  document.getElementById(id).classList.add("hidden");
-} -->
+    paqueteSelect.addEventListener("change", async function () {
+      const paqueteId = this.value;
+      console.log("Paquete cambiado:", this.value);
 
-  <!-- // Firma con Canvas
-// let canvas = document.getElementById("canvasFirma");
-// let ctx = canvas.getContext("2d");
-// let firmando = false;
+      lista.innerHTML =
+        "<p class='text-gray-500'>Cargando consentimientos…</p>";
 
-// canvas.addEventListener("mousedown", () => firmando = true);
-// canvas.addEventListener("mouseup", () => firmando = false);
-// canvas.addEventListener("mousemove", dibujar);
+      if (!paqueteId) {
+        lista.innerHTML = "<p class='text-gray-500'>Seleccione un paquete…</p>";
+        return;
+      }
 
-// function dibujar(e) {
-//   if (!firmando) return;
-//   ctx.lineWidth = 2;
-//   ctx.lineCap = "round";
-//   ctx.strokeStyle = "black";
-//   ctx.lineTo(e.offsetX, e.offsetY);
-//   ctx.stroke();
-//   ctx.beginPath();
-//   ctx.moveTo(e.offsetX, e.offsetY);
-// }
+      const res = await fetch(`/api/plantillas_por_paquete/${paqueteId}`);
+      const data = await res.json();
 
-// function limpiarFirma() {
-//   ctx.clearRect(0, 0, canvas.width, canvas.height);
-//   ctx.beginPath();
-// }
+      if (data.length === 0) {
+        lista.innerHTML =
+          "<p class='text-red-500'>Este paquete no tiene consentimientos</p>";
+        return;
+      }
 
-// function guardarFirma() {
-//   let firma = canvas.toDataURL("image/png");
-//   console.log("Firma guardada en base64:", firma.substring(0, 50) + "...");
-//   cerrarModal("modalFirma");
-// }
-// </script> -->
-  {% endblock %}
+      lista.innerHTML = "";
+
+      data.forEach((p) => {
+        lista.innerHTML += `
+      <div class="border rounded p-4 shadow bg-gray-50">
+        <p class="font-medium mb-2">${p.nombre}</p>
+
+        <button
+          onclick="generarConsentimiento(${p.id})"
+          class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+          Generar / Descargar
+        </button>
+      </div>
+    `;
+      });
+    });
+
+    function generarConsentimiento(plantillaId) {
+      alert("Aquí generaremos el consentimiento ID: " + plantillaId);
+      // En el siguiente paso lo conectamos con /generar
+    }
+  </script>
 </div>
+{% endblock %}

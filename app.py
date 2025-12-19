@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session, abort, make_response
+from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session, abort, make_response, flash
 import sqlite3
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
@@ -9,7 +9,7 @@ from datetime import datetime
 from database import get_db
 import json
 import base64
-from weasyprint import HTML
+import subprocess
 
 
 app = Flask(__name__)
@@ -37,9 +37,23 @@ def login():
             session["sede_id"] = user["sede_id"]
             return redirect("/")
         else:
+            flash('Usuario o contraseña incorrectos.', 'danger')
             return render_template("login.html", error="Usuario o contraseña incorrectos")
+            
 
     return render_template("login.html")
+
+def convertir_a_pdf(ruta_docx):
+    carpeta = os.path.dirname(ruta_docx)
+    subprocess.run([
+        "soffice",
+        "--headless",
+        "--convert-to", "pdf",
+        "--outdir", carpeta,
+        ruta_docx
+    ], check=True)
+
+    return ruta_docx.replace(".docx", ".pdf")
 
 
 ##INICIO CRUD DE USUARIOS
@@ -307,10 +321,14 @@ def generar():
     salida = os.path.join("generated", nombre_archivo)
     doc.save(salida)
 
+# ==============================
+# CONVERTIR A PDF
+# ==============================
+    ruta_pdf = convertir_a_pdf(salida)
+
     # ==============================
-    # GUARDAR HISTORIAL EN BD
+    # GUARDAR EN BD (PDF)
     # ==============================
-    plantilla_id = datos.get("plantilla_id")
     db.execute("""
         INSERT INTO consentimientos (
             fecha,
@@ -327,14 +345,15 @@ def generar():
         datos.get("paciente_id"),
         doctor_id if doctor_id else None,
         enfermero_id if enfermero_id else None,
-        f"{plantilla_id} | {datos['plantilla']}",
-        salida
+        datos["plantilla"],
+        ruta_pdf
     ))
 
     db.commit()
     db.close()
 
-    return send_file(salida, as_attachment=True)
+    return send_file(ruta_pdf, as_attachment=True)
+
 
 
 
@@ -598,30 +617,30 @@ def api_buscar_paciente():
 
     return {"result": pacientes}
 
-@app.route("/api/plantillas_por_paquete/<int:paquete_id>")
-def plantillas_por_paquete(paquete_id):
-    if "usuario" not in session:
-        return {"error": "unauthorized"}, 401
+# @app.route("/api/plantillas_por_paquete/<int:paquete_id>")
+# def plantillas_por_paquete(paquete_id):
+#     if "usuario" not in session:
+#         return {"error": "unauthorized"}, 401
 
-    db = get_db()
-    plantillas = db.execute("""
-        SELECT id, nombre, titulo, version
-        FROM plantillas_consentimiento
-        WHERE paquete_id = ?
-        ORDER BY nombre
-    """, (paquete_id,)).fetchall()
-    db.close()
+#     db = get_db()
+#     plantillas = db.execute("""
+#         SELECT id, nombre, titulo, version
+#         FROM plantillas_consentimiento
+#         WHERE paquete_id = ?
+#         ORDER BY nombre
+#     """, (paquete_id,)).fetchall()
+#     db.close()
 
-    return {
-        "result": [
-            {
-                "id": p["id"],
-                "nombre": p["nombre"],
-                "titulo": p["titulo"],
-                "version": p["version"]
-            } for p in plantillas
-        ]
-    }
+#     return {
+#         "result": [
+#             {
+#                 "id": p["id"],
+#                 "nombre": p["nombre"],
+#                 "titulo": p["titulo"],
+#                 "version": p["version"]
+#             } for p in plantillas
+#         ]
+#     }
 
 @app.route("/consentimientos/generar_pdf")
 def generar_consentimiento_pdf():
@@ -798,10 +817,9 @@ def listar_consentimientos():
 
     return render_template("consentimientos/lista.html", consentimientos=data)
 
-@app.route("/consentimientos/nuevo")
+@app.route("/consentimientos/nuevo", methods=["GET", "POST"])
 def nuevo_consentimiento():
-    
-    if "usuario" not in session or session["rol"] != "admin":
+    if "usuario" not in session:
         return redirect("/login")
 
     db = get_db()
@@ -816,13 +834,34 @@ def nuevo_consentimiento():
         WHERE tipo='enfermero' AND sede_id=?
     """, (session["sede_id"],)).fetchall()
 
+    paquetes = db.execute("""
+        SELECT * FROM paquetes
+        WHERE sede_id=?
+    """, (session["sede_id"],)).fetchall()
+
+    plantillas = []
+
+    if request.method == "POST":
+        paquete_id = request.form.get("paquete_id")
+
+        if paquete_id:
+            plantillas = db.execute("""
+                SELECT *
+                FROM plantillas_consentimiento
+                WHERE paquete_id=?
+            """, (paquete_id,)).fetchall()
+
     db.close()
 
     return render_template(
         "consentimientos/nuevo.html",
         doctores=doctores,
-        enfermeros=enfermeros
+        enfermeros=enfermeros,
+        paquetes=paquetes,
+        plantillas=plantillas
     )
+
+
 ## crud PLANTILLAS DE CONSENTIMIENTOS
 @app.route("/plantillas_consentimiento/nuevo", methods=["GET", "POST"])
 def nueva_plantilla():
@@ -1037,7 +1076,7 @@ def descargar_consentimiento(id):
 
     return send_file(consentimiento["archivo_generado"], as_attachment=True)
 ## CRUD PAQUETES
-@app.route("/   ")
+@app.route("/paquetes")
 def paquetes_lista():
     
     if "usuario" not in session:
@@ -1217,6 +1256,26 @@ def plantillas_editar(id):
 
     db.close()
     return render_template("plantillas/editar.html", plantilla=plantilla)
+
+@app.route("/api/plantillas_por_paquete/<int:paquete_id>")
+def plantillas_por_paquete(paquete_id):
+    if "usuario" not in session:
+        return {"result": []}
+
+    db = get_db()
+    filas = db.execute("""
+        SELECT id, titulo, nombre, version
+        FROM plantillas_consentimiento
+        WHERE paquete_id = ?
+    """, (paquete_id,)).fetchall()
+    db.close()
+
+    return {
+        "result": [
+            dict(row) for row in filas
+        ]
+    }
+
 
 
 if __name__ == "__main__":

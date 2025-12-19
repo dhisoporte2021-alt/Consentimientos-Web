@@ -1,3 +1,5 @@
+console.log("scripts.js de niuevo");
+
 let timer = null;
 
 document.getElementById("buscarInput")?.addEventListener("input", function () {
@@ -63,40 +65,61 @@ function abrirModalPaciente(id, nombre, documento, ciudad) {
   document.getElementById("modalPaciente").classList.remove("hidden");
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-      const button = document.getElementById('user-menu-button');
-      const menu = document.getElementById('user-menu');
+document.addEventListener('DOMContentLoaded', function () {
+  const button = document.getElementById('user-menu-button');
+  const menu = document.getElementById('user-menu');
+  const container = document.getElementById('user-menu-container');
 
-        // Función para alternar la visibilidad
-        function toggleMenu() {
-            if (menu.style.display === 'none' || menu.style.display === '') {
-                menu.style.display = 'block';
-            } else {
-                menu.style.display = 'none';
-            }
-        }
+  // 🔒 Si no existe en esta vista, salimos sin romper nada
+  if (!button || !menu || !container) return;
 
-        // 1. Mostrar/Ocultar al hacer clic en el botón
-        button.addEventListener('click', toggleMenu);
+  function toggleMenu() {
+    menu.style.display =
+      menu.style.display === 'block' ? 'none' : 'block';
+  }
 
-        // 2. Ocultar el menú al hacer clic fuera de él
-        document.addEventListener('click', function(event) {
-            const container = document.getElementById('user-menu-container');
-            if (container && !container.contains(event.target) && menu.style.display === 'block') {
-                menu.style.display = 'none';
-            }
-      });
+  // Mostrar / ocultar
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
   });
 
-   document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Flatpickr en el campo con el ID 'fecha_nacimiento_flatpickr'
-    flatpickr("#fecha_nacimiento_flatpickr", {
-      dateFormat: "Y-m-d", // Formato que tu backend de Flask/SQLite espera
-      // Otras opciones útiles:
-      // maxDate: "today", // No permite fechas futuras
-      // locale: "es", // Si necesitas cambiar el idioma
-    });
+  // Ocultar al hacer click fuera
+  document.addEventListener('click', function (event) {
+    if (!container.contains(event.target)) {
+      menu.style.display = 'none';
+    }
   });
+});
+
+
+   document.addEventListener('DOMContentLoaded', function () {
+  const button = document.getElementById('user-menu-button');
+  const menu = document.getElementById('user-menu');
+  const container = document.getElementById('user-menu-container');
+
+  // 🔒 Si no existe en esta vista, salimos sin romper nada
+  if (!button || !menu || !container) return;
+
+  function toggleMenu() {
+    menu.style.display =
+      menu.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // Mostrar / ocultar
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Ocultar al hacer click fuera
+  document.addEventListener('click', function (event) {
+    if (!container.contains(event.target)) {
+      menu.style.display = 'none';
+    }
+  });
+});
+
 
   function seleccionarPaciente(id, nombre, cedula, ciudad) {
   document.getElementById("p_nombre").innerText = nombre;
@@ -133,50 +156,170 @@ function limpiarFirma() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-document.getElementById("paquete_id").addEventListener("change", function () {
-  let paqueteId = this.value;
-  let cont = document.getElementById("listaConsentimientos");
+// document.getElementById("paquete_id").addEventListener("change", function () {
+//   let paqueteId = this.value;
+//   let cont = document.getElementById("listaConsentimientos");
 
-  if (!paqueteId) {
-    cont.innerHTML = `<p class="text-gray-500">Seleccione un paquete…</p>`;
-    return;
-  }
+//   if (!paqueteId) {
+//     cont.innerHTML = `<p class="text-gray-500">Seleccione un paquete…</p>`;
+//     return;
+//   }
 
-  fetch(`/api/plantillas_por_paquete/${paqueteId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (!data.result || data.result.length === 0) {
-        cont.innerHTML = `<p class="text-gray-500">No hay consentimientos.</p>`;
-        return;
-      }
+//   fetch(`/api/plantillas_por_paquete/${paqueteId}`)
+//     .then(res => res.json())
+//     .then(data => {
+//       if (!data.result || data.result.length === 0) {
+//         cont.innerHTML = `<p class="text-gray-500">No hay consentimientos.</p>`;
+//         return;
+//       }
 
-      let html = "";
-      data.result.forEach(c => {
-        html += `
-          <div class="border rounded p-4 hover:bg-blue-50 cursor-pointer"
-               onclick="generarConsentimiento(${c.id})">
-            <h5 class="font-semibold">${c.titulo}</h5>
-            <p class="text-sm text-gray-600">${c.nombre}</p>
-            <p class="text-xs text-gray-400">Versión ${c.version}</p>
-          </div>
-        `;
-      });
+//       let html = "";
+//       data.result.forEach(c => {
+//         html += `
+//           <div class="border rounded p-4 hover:bg-blue-50 cursor-pointer"
+//                onclick="generarConsentimiento(${c.id})">
+//             <h5 class="font-semibold">${c.titulo}</h5>
+//             <p class="text-sm text-gray-600">${c.nombre}</p>
+//             <p class="text-xs text-gray-400">Versión ${c.version}</p>
+//           </div>
+//         `;
+//       });
 
-      cont.innerHTML = html;
-    });
-});
+//       cont.innerHTML = html;
+//     });
+// });
+
+
+// document.querySelector('select[name="paquete_id"]')
+//   addEventListener("change", function () {
+
+//     const paqueteId = this.value;
+//     const contenedor = document.getElementById("opcionesConsentimientos");
+//     const lista = document.getElementById("listaConsentimientos");
+
+//     lista.innerHTML = "";
+//     contenedor.classList.add("hidden");
+
+//     if (!paqueteId) return;
+
+//     fetch(`/api/plantillas_por_paquete/${paqueteId}`)
+//       .then(res => res.json())
+//       .then(data => {
+
+//         if (!data.plantillas.length) {
+//           lista.innerHTML = `
+//             <div class="text-gray-500">
+//               No hay consentimientos para este paquete
+//             </div>
+//           `;
+//         } else {
+//           data.plantillas.forEach(p => {
+//             lista.innerHTML += `
+//               <button
+//                 onclick="generarConsentimiento(${p.id})"
+//                 class="border rounded p-4 hover:bg-blue-50 text-left"
+//               >
+//                 <h3 class="font-semibold">${p.titulo}</h3>
+//                 <p class="text-sm text-gray-600">${p.nombre}</p>
+//               </button>
+//             `;
+//           });
+//         }
+
+//         contenedor.classList.remove("hidden");
+//       });
+// });
+
 function generarConsentimiento(plantillaId) {
-  const pacienteId = document.getElementById("paciente_id").value;
-  const doctorId = document.getElementById("doctor_id").value;
-  const enfermeroId = document.getElementById("enfermero_id").value;
-  const fecha = document.getElementById("fecha_consentimiento").value;
+  const form = document.querySelector("form");
 
-  if (!pacienteId) {
-    alert("Seleccione un paciente");
-    return;
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.name = "plantilla_id";
+  input.value = plantillaId;
+
+  form.appendChild(input);
+  form.action = "/generar";
+  form.submit();
+}
+// document.addEventListener("DOMContentLoaded", function () {
+//   const paqueteSelect = document.getElementById("paquete_id");
+//   const cont = document.getElementById("listaConsentimientos");
+
+//   if (!paqueteSelect || !cont) return;
+
+//   paqueteSelect.addEventListener("change", function () {
+//     const paqueteId = this.value;
+
+//     if (!paqueteId) {
+//       cont.innerHTML = `<p class="text-gray-500">Seleccione un paquete…</p>`;
+//       return;
+//     }
+
+//     fetch(`/api/plantillas_por_paquete/${paqueteId}`)
+//       .then(res => res.json())
+//       .then(data => {
+//         if (!data.result || data.result.length === 0) {
+//           cont.innerHTML = `<p class="text-gray-500">No hay consentimientos.</p>`;
+//           return;
+//         }
+
+//         let html = "";
+//         data.result.forEach(c => {
+//           html += `
+//             <div class="border rounded p-4 hover:bg-blue-50 cursor-pointer"
+//                  onclick="generarConsentimiento(${c.id})">
+//               <h5 class="font-semibold">${c.titulo}</h5>
+//               <p class="text-sm text-gray-600">${c.nombre}</p>
+//               <p class="text-xs text-gray-400">Versión ${c.version}</p>
+//             </div>
+//           `;
+//         });
+
+//         cont.innerHTML = html;
+//       });
+//   });
+// });
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ===== MENU USUARIO =====
+  const button = document.getElementById('user-menu-button');
+  const menu = document.getElementById('user-menu');
+  const container = document.getElementById('user-menu-container');
+
+  if (button && menu) {
+    button.addEventListener('click', function (e) {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function (event) {
+      if (container && !container.contains(event.target)) {
+        menu.style.display = 'none';
+      }
+    });
   }
 
-  // siguiente paso: capturar firma + enviar a backend
-  window.location.href =
-    `/consentimientos/generar_pdf?plantilla_id=${plantillaId}&paciente_id=${pacienteId}&doctor_id=${doctorId}&enfermero_id=${enfermeroId}&fecha=${fecha}`;
-}
+  // ===== FLATPICKR =====
+  if (document.getElementById("fecha_nacimiento_flatpickr")) {
+    flatpickr("#fecha_nacimiento_flatpickr", {
+      dateFormat: "Y-m-d",
+    });
+  }
+
+  // ===== FIRMA =====
+  const canvas = document.getElementById("firmaCanvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let dibujando = false;
+
+    canvas.addEventListener("mousedown", () => dibujando = true);
+    canvas.addEventListener("mouseup", () => dibujando = false);
+    canvas.addEventListener("mousemove", function (e) {
+      if (!dibujando) return;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    });
+  }
+
+});

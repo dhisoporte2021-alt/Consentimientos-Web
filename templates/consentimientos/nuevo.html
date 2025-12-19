@@ -1,90 +1,262 @@
 {% extends "base.html" %} {% block contenido %}
-
-<div class="mx-auto bg-white p-6 rounded shadow">
-  <h1 class="text-2xl font-bold mb-6">Nuevo consentimiento</h1>
-
-  <!-- ========================= -->
-  <!-- BUSCAR PACIENTE -->
-  <!-- ========================= -->
-  <div class="mb-6">
-    <label class="block text-sm font-medium text-gray-700">
-      Buscar paciente
-    </label>
-
-    <input
-      type="text"
-      id="buscarInput"
-      placeholder="Nombre o cédula..."
-      class="w-full border p-2 rounded"
-      autocomplete="off"
-    />
-
-    <div
-      id="resultados"
-      class="border mt-1 rounded bg-white hidden max-h-48 overflow-y-auto"
-    ></div>
-  </div>
-
-  <!-- ========================= -->
-  <!-- PACIENTE SELECCIONADO -->
-  <!-- ========================= -->
-  <div id="modalPaciente" class="hidden border rounded p-4 mb-6 bg-blue-50">
-    <h2 class="font-semibold mb-2">Paciente seleccionado</h2>
-    <p><strong>Nombre:</strong> <span id="pacienteNombre"></span></p>
-    <p><strong>Documento:</strong> <span id="pacienteDocumento"></span></p>
-    <p><strong>Ciudad:</strong> <span id="pacienteCiudad"></span></p>
-  </div>
-
-  <!-- ========================= -->
-  <!-- FORMULARIO -->
-  <!-- ========================= -->
-  <form
-    method="POST"
-    action="/consentimientos/crear"
-    enctype="multipart/form-data"
+<div class="max-auto bg-white p-6 rounded shadow">
+  <h1 class="mb-2-red">
+    <span class="text-2xl font-semibold mb-4 text-gray-700"
+      >Crear Consentimientos Informados</span
+    >
+  </h1>
+  <br />
+  <h2 class="mb-1">
+    <span class="text-md font-medium mb-4 text-gray-600"
+      >Gestiona los consentimientos informados de los pacientes</span
+    >
+  </h2>
+  <div
+    class="p-4 text-sm text-[#1D5E65] rounded bg-[#B3E2E1] w-full"
+    role="alert"
   >
-    <!-- ESTE INPUT ES CLAVE -->
-    <input type="hidden" name="paciente_id" id="paciente_id" />
+    <span class="font-bold">
+      <i class="fa-solid fa-shield"></i> Seguridad de Firmas <br
+    /></span>
+    Por protección de la privacidad del paciente, las firmas digitales no se
+    almacenan en el sistema. Solo se incluyen en el PDF generado y se eliminan
+    automáticamente después de la generación del documento
+  </div>
+  <div class="p-6">
+    <h1 class="text-2xl font-semibold mb-4 text-gray-700">Buscar Paciente</h1>
 
-    <!-- DOCTOR -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Doctor</label>
-      <select name="doctor_id" class="w-full border p-2 rounded">
-        <option value="">Seleccione</option>
-        {% for d in doctores %}
-        <option value="{{ d.id }}">{{ d.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <!-- ENFERMERO -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Enfermero</label>
-      <select name="enfermero_id" class="w-full border p-2 rounded">
-        <option value="">Seleccione</option>
-        {% for e in enfermeros %}
-        <option value="{{ e.id }}">{{ e.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700"
-        >Fecha de Nacimiento</label
-      >
+    <!-- Buscador -->
+    <div class="relative max-w-lg">
       <input
+        id="buscarInput"
         type="text"
-        name="fecha_nacimiento"
-        id="fecha_nacimiento_flatpickr"
-        class="mt-1 w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
-        placeholder="Seleccionar Fecha"
+        placeholder="Escriba nombre o cédula del paciente..."
+        class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+      <a
+        href="/formulario"
+        class="bg-neutral-primary-soft block border border-default rounded-base shadow-xs transition hover:bg-gray-200"
+      ></a>
+      <!-- Resultados dinámicos -->
+      <div
+        id="resultados"
+        class="absolute bg-white border rounded-lg mt-1 w-full shadow hidden z-10"
+      ></div>
     </div>
-    <!-- PLANTILLA -->
-    <br>
-    <button class="bg-blue-600 text-white px-6  py-2 rounded hover:bg-blue-700">
-      Generar consentimiento
-    </button>
-  </form>
-</div>
+
+    <!-- Botón de prueba manual -->
+    <div class="mt-6">
+      <!-- <a
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        href="/pacientes/agregar"
+        >agregar pacientes</a
+      >
+      <a
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        href="/consentimientos/nuevo"
+        >nuevo</a
+      >
+      <a
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        href="/plantillas_consentimiento/nuevo"
+        >nueva plantilla de consentimientos</a
+      > -->
+
+      <div
+        id="bloquePaciente"
+        class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <div class="bg-white border rounded-lg p-4 shadow">
+          <h3 class="text-lg font-semibold mb-2 text-blue-600">
+            Paciente seleccionado
+          </h3>
+
+          <p><strong>Nombre:</strong> <span id="p_nombre"></span></p>
+          <p><strong>Cédula:</strong> <span id="p_cedula"></span></p>
+          <p><strong>Ciudad:</strong> <span id="p_ciudad"></span></p>
+
+          <input type="hidden" name="paciente_id" id="paciente_id" />
+        </div>
+        <div class="bg-white border rounded-lg p-4 shadow">
+          <h3 class="text-lg font-semibold mb-2">Firma del paciente</h3>
+
+          <div
+            id="contenedorCanvas"
+            class="border rounded bg-gray-50 overflow-hidden"
+            style="height: 160px; position: relative"
+          >
+            <canvas
+              id="firmaCanvas"
+              class="block touch-none cursor-crosshair"
+            ></canvas>
+          </div>
+
+          <div class="flex gap-2 mt-3">
+            <button
+              type="button"
+              id="btnLimpiarFirma"
+              class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Limpiar
+            </button>
+            <label
+              class="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700"
+            >
+              Subir firma
+              <input type="file" id="firmaFile" accept="image/*" hidden />
+            </label>
+          </div>
+
+          <input type="hidden" name="firma_paciente" id="inputFirmaData" />
+        </div>
+        <!-- <div class="bg-white border rounded-lg p-4 shadow">
+          <h3 class="text-lg font-semibold mb-2">Firma del paciente</h3>
+
+          <canvas id="firmaCanvas" class="border w-full h-40"></canvas>
+
+          <div class="flex gap-2 mt-3">
+            <button
+              type="button"
+              onclick="limpiarFirma()"
+              class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Limpiar
+            </button>
+
+            <label
+              class="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer"
+            >
+              Subir firma
+              <input type="file" id="firmaUpload" accept="image/*" hidden />
+            </label>
+          </div>
+
+          <input type="hidden" name="firma_paciente" id="firma_paciente" />
+        </div> -->
+      </div>
+    </div>
+
+    <!-- ===================== MODAL 1 — DATOS DEL PACIENTE ===================== -->
+    <div
+      id="modalPaciente"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white rounded-lg w-96 p-6 shadow-lg relative">
+        <h2 class="text-xl font-semibold mb-4">Datos del Paciente</h2>
+
+        <div class="space-y-2">
+          <p><strong>Nombre:</strong> <span id="pacienteNombre"></span></p>
+          <p>
+            <strong>Tipo de documento:</strong> <span id="pacienteTipo"></span>
+          </p>
+          <p>
+            <strong>Documento:</strong> <span id="pacienteDocumento"></span>
+          </p>
+          <p>
+            <strong>Ciudad de expedición:</strong>
+            <span id="pacienteCiudad"></span>
+          </p>
+        </div>
+
+        <div class="flex justify-end mt-5 gap-3">
+          <button
+            onclick="cerrarModal('modalPaciente')"
+            class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100"
+          >
+            Cerrar
+          </button>
+          <button
+            onclick="abrirModalFirma()"
+            class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+          >
+            Firmar
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- CONFIGURACIÓN DEL CONSENTIMIENTO -->
+    <form method="POST" action="/consentimientos/nuevo">
+
+  <div
+    id="configConsentimiento"
+    class="mt-8 bg-white border rounded-lg p-6 shadow"
+  >
+    <h3 class="text-xl font-semibold mb-4">
+      Configuración del consentimiento
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      <!-- DOCTOR -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Doctor</label>
+        <select name="doctor_id" id="doctor_id" class="w-full border rounded p-2" required>
+          <option value="">Seleccione</option>
+          {% for d in doctores %}
+          <option value="{{ d.id }}">{{ d.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- ENFERMERO -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Enfermero</label>
+        <select name="enfermero_id" id="enfermero_id" class="w-full border rounded p-2" required>
+          <option value="">Seleccione</option>
+          {% for e in enfermeros %}
+          <option value="{{ e.id }}">{{ e.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- FECHA -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Fecha</label>
+        <input
+          type="date"
+          name="fecha"
+          id="fecha_consentimiento"
+          class="w-full border rounded p-2"
+          value="{{ today }}"
+          required
+        />
+      </div>
+
+      <!-- PAQUETE -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Paquete</label>
+        <select
+          name="paquete_id"
+          id="paquete_id"
+          class="border rounded p-2 w-full"
+          required
+        >
+          <option value="">Seleccione paquete</option>
+          {% for p in paquetes %}
+          <option value="{{ p.id }}">{{ p.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    </div>
+
+    <!-- LISTA DE CONSENTIMIENTOS -->
+    <div class="mt-6">
+      <h4 class="font-semibold mb-2">Consentimientos disponibles</h4>
+      <div
+        id="listaConsentimientos"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        <p class="text-gray-500">Seleccione un paquete…</p>
+      </div>
+    </div>
+
+  </div>
+
+</form>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/consentimientos.js') }}"></script>
+{% endblock %}
 
 {% endblock %}
