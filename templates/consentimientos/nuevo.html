@@ -109,30 +109,7 @@
 
           <input type="hidden" name="firma_paciente" id="inputFirmaData" />
         </div>
-        <!-- <div class="bg-white border rounded-lg p-4 shadow">
-          <h3 class="text-lg font-semibold mb-2">Firma del paciente</h3>
-
-          <canvas id="firmaCanvas" class="border w-full h-40"></canvas>
-
-          <div class="flex gap-2 mt-3">
-            <button
-              type="button"
-              onclick="limpiarFirma()"
-              class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-            >
-              Limpiar
-            </button>
-
-            <label
-              class="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer"
-            >
-              Subir firma
-              <input type="file" id="firmaUpload" accept="image/*" hidden />
-            </label>
-          </div>
-
-          <input type="hidden" name="firma_paciente" id="firma_paciente" />
-        </div> -->
+        
       </div>
     </div>
 
@@ -190,7 +167,7 @@
       <!-- DOCTOR -->
       <div>
         <label class="block text-sm font-medium mb-1">Doctor</label>
-        <select name="doctor_id" id="doctor_id" class="w-full border rounded p-2" required>
+        <select name="doctor_id" id="doctor_id" class="w-full border rounded p-2" >
           <option value="">Seleccione</option>
           {% for d in doctores %}
           <option value="{{ d.id }}">{{ d.nombre }}</option>
@@ -201,7 +178,7 @@
       <!-- ENFERMERO -->
       <div>
         <label class="block text-sm font-medium mb-1">Enfermero</label>
-        <select name="enfermero_id" id="enfermero_id" class="w-full border rounded p-2" required>
+        <select name="enfermero_id" id="enfermero_id" class="w-full border rounded p-2" >
           <option value="">Seleccione</option>
           {% for e in enfermeros %}
           <option value="{{ e.id }}">{{ e.nombre }}</option>

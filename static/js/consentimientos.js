@@ -24,29 +24,41 @@ document.addEventListener("DOMContentLoaded", () => {
           lista.innerHTML = `<p class="text-gray-500">No hay consentimientos.</p>`;
           return;
         }
-
         let html = "";
-        data.result.forEach(c => {
-          html += `
-            <div
-              class="border rounded p-4 shadow hover:bg-blue-50 cursor-pointer"
-              data-id="${c.id}"
-            >
-              <h5 class="font-semibold">${c.titulo}</h5>
-              <p class="text-sm text-gray-600">${c.nombre}</p>
-              <p class="text-xs text-gray-400">Versión ${c.version}</p>
-            </div>
-          `;
-        });
+data.result.forEach(c => {
+  html += `
+    <form
+      method="POST"
+      action="/consentimientos/generar/${c.id}"
+      class="border rounded p-4 shadow hover:bg-blue-50"
+    >
+
+      <input type="hidden" name="paciente_id"
+        value="${document.getElementById("paciente_id")?.value || ""}">
+
+      <input type="hidden" name="doctor_id"
+        value="${document.getElementById("doctor_id")?.value || ""}">
+
+      <input type="hidden" name="enfermero_id"
+        value="${document.getElementById("enfermero_id")?.value || ""}">
+
+      <input type="hidden" name="fecha_consentimiento"
+        value="${document.getElementById("fecha_consentimiento")?.value || ""}">
+
+      <button type="submit" class="w-full text-left">
+        <h5 class="font-semibold">${c.titulo}</h5>
+        <p class="text-sm text-gray-600">${c.nombre}</p>
+        <p class="text-xs text-gray-400">Versión ${c.version}</p>
+      </button>
+
+    </form>
+  `;
+});
 
         lista.innerHTML = html;
-      })
-      .catch(err => {
-        console.error("❌ Error cargando consentimientos", err);
-        lista.innerHTML = `<p class="text-red-500">Error al cargar</p>`;
       });
-  });
-});
+
+    });
 
 
 (function () {
@@ -146,3 +158,5 @@ function generarConsentimiento(plantillaId) {
   document.body.appendChild(form);
   form.submit();
 }
+
+});

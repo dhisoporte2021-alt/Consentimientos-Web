@@ -1276,6 +1276,64 @@ def plantillas_por_paquete(paquete_id):
         ]
     }
 
+@app.route("/consentimientos/generar/<int:plantilla_id>", methods=["POST"])
+def generar_consentimiento_prueba(plantilla_id):
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    db = get_db()
+
+    # ---- datos del formulario ----
+    paciente_id = request.form.get("paciente_id")
+    doctor_id = request.form.get("doctor_id")
+    enfermero_id = request.form.get("enfermero_id")
+    fecha = request.form.get("fecha_consentimiento")
+
+    # ---- consultas ----
+    paciente = db.execute(
+        "SELECT * FROM pacientes WHERE id=?",
+        (paciente_id,)
+    ).fetchone()
+
+    doctor = db.execute(
+        "SELECT * FROM personal WHERE id=?",
+        (doctor_id,)
+    ).fetchone()
+
+    enfermero = db.execute(
+        "SELECT * FROM personal WHERE id=?",
+        (enfermero_id,)
+    ).fetchone()
+
+    plantilla = db.execute(
+        "SELECT * FROM plantillas_consentimiento WHERE id=?",
+        (plantilla_id,)
+    ).fetchone()
+
+    db.close()
+
+    # ---- contenido original ----
+    contenido = plantilla["contenido"]
+
+    # ---- variables ----
+    variables = {
+        "{{PACIENTE_NOMBRE}}": paciente["nombre"],
+        "{{PACIENTE_CEDULA}}": paciente["cedula"],
+        "{{DOCTOR}}": doctor["nombre"],
+        "{{ENFERMERO}}": enfermero["nombre"],
+        "{{FECHA}}": fecha,
+    }
+
+    # ---- reemplazo ----
+    for key, value in variables.items():
+        contenido = contenido.replace(key, value or "")
+
+    # ---- SOLO PARA PRUEBA ----
+    return render_template(
+        "consentimientos/preview.html",
+        contenido=contenido
+    )
 
 
 if __name__ == "__main__":
