@@ -1284,13 +1284,11 @@ def generar_consentimiento_prueba(plantilla_id):
 
     db = get_db()
 
-    # ---- datos del formulario ----
     paciente_id = request.form.get("paciente_id")
     doctor_id = request.form.get("doctor_id")
     enfermero_id = request.form.get("enfermero_id")
-    fecha = request.form.get("fecha_consentimiento")
+    fecha = request.form.get("fecha")
 
-    # ---- consultas ----
     paciente = db.execute(
         "SELECT * FROM pacientes WHERE id=?",
         (paciente_id,)
@@ -1301,10 +1299,12 @@ def generar_consentimiento_prueba(plantilla_id):
         (doctor_id,)
     ).fetchone()
 
-    enfermero = db.execute(
-        "SELECT * FROM personal WHERE id=?",
-        (enfermero_id,)
-    ).fetchone()
+    enfermero = None
+    if enfermero_id:
+        enfermero = db.execute(
+            "SELECT * FROM personal WHERE id=?",
+            (enfermero_id,)
+        ).fetchone()
 
     plantilla = db.execute(
         "SELECT * FROM plantillas_consentimiento WHERE id=?",
@@ -1313,27 +1313,24 @@ def generar_consentimiento_prueba(plantilla_id):
 
     db.close()
 
-    # ---- contenido original ----
     contenido = plantilla["contenido"]
 
-    # ---- variables ----
     variables = {
-        "{{PACIENTE_NOMBRE}}": paciente["nombre"],
-        "{{PACIENTE_CEDULA}}": paciente["cedula"],
-        "{{DOCTOR}}": doctor["nombre"],
-        "{{ENFERMERO}}": enfermero["nombre"],
-        "{{FECHA}}": fecha,
+        "{{PACIENTE_NOMBRE}}": paciente["nombre"] if paciente else "",
+        "{{PACIENTE_CEDULA}}": paciente["cedula"] if paciente else "",
+        "{{DOCTOR}}": doctor["nombre"] if doctor else "",
+        "{{ENFERMERO}}": enfermero["nombre"] if enfermero else "",
+        "{{FECHA}}": fecha or "",
     }
 
-    # ---- reemplazo ----
     for key, value in variables.items():
-        contenido = contenido.replace(key, value or "")
+        contenido = contenido.replace(key, value)
 
-    # ---- SOLO PARA PRUEBA ----
     return render_template(
         "consentimientos/preview.html",
         contenido=contenido
     )
+
 
 
 if __name__ == "__main__":

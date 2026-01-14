@@ -46,21 +46,7 @@
 
     <!-- Botón de prueba manual -->
     <div class="mt-6">
-      <!-- <a
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        href="/pacientes/agregar"
-        >agregar pacientes</a
-      >
-      <a
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        href="/consentimientos/nuevo"
-        >nuevo</a
-      >
-      <a
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        href="/plantillas_consentimiento/nuevo"
-        >nueva plantilla de consentimientos</a
-      > -->
+      
 
       <div
         id="bloquePaciente"
@@ -109,7 +95,6 @@
 
           <input type="hidden" name="firma_paciente" id="inputFirmaData" />
         </div>
-        
       </div>
     </div>
 
@@ -153,87 +138,90 @@
     </div>
     <!-- CONFIGURACIÓN DEL CONSENTIMIENTO -->
     <form method="POST" action="/consentimientos/nuevo">
-
-  <div
-    id="configConsentimiento"
-    class="mt-8 bg-white border rounded-lg p-6 shadow"
-  >
-    <h3 class="text-xl font-semibold mb-4">
-      Configuración del consentimiento
-    </h3>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-      <!-- DOCTOR -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Doctor</label>
-        <select name="doctor_id" id="doctor_id" class="w-full border rounded p-2" >
-          <option value="">Seleccione</option>
-          {% for d in doctores %}
-          <option value="{{ d.id }}">{{ d.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <!-- ENFERMERO -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Enfermero</label>
-        <select name="enfermero_id" id="enfermero_id" class="w-full border rounded p-2" >
-          <option value="">Seleccione</option>
-          {% for e in enfermeros %}
-          <option value="{{ e.id }}">{{ e.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <!-- FECHA -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Fecha</label>
-        <input
-          type="date"
-          name="fecha"
-          id="fecha_consentimiento"
-          class="w-full border rounded p-2"
-          value="{{ today }}"
-          required
-        />
-      </div>
-
-      <!-- PAQUETE -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Paquete</label>
-        <select
-          name="paquete_id"
-          id="paquete_id"
-          class="border rounded p-2 w-full"
-          required
-        >
-          <option value="">Seleccione paquete</option>
-          {% for p in paquetes %}
-          <option value="{{ p.id }}">{{ p.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-    </div>
-
-    <!-- LISTA DE CONSENTIMIENTOS -->
-    <div class="mt-6">
-      <h4 class="font-semibold mb-2">Consentimientos disponibles</h4>
       <div
-        id="listaConsentimientos"
-        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+        id="configConsentimiento"
+        class="mt-8 bg-white border rounded-lg p-6 shadow"
       >
-        <p class="text-gray-500">Seleccione un paquete…</p>
+        <h3 class="text-xl font-semibold mb-4">
+          Configuración del consentimiento
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- DOCTOR -->
+          <div>
+            <label class="block text-sm font-medium mb-1">Doctor</label>
+            <select
+              name="doctor_id"
+              id="doctor_id"
+              class="w-full border rounded p-2"
+            >
+              <option value="">Seleccione</option>
+              {% for d in doctores %}
+              <option value="{{ d.id }}">{{ d.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- ENFERMERO -->
+          <div>
+            <label class="block text-sm font-medium mb-1">Enfermero</label>
+            <select
+              name="enfermero_id"
+              id="enfermero_id"
+              class="w-full border rounded p-2"
+            >
+              <option value="">Seleccione</option>
+              {% for e in enfermeros %}
+              <option value="{{ e.id }}">{{ e.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- FECHA -->
+          <div>
+            <label class="block text-sm font-medium mb-1">Fecha</label>
+            <input
+              type="date"
+              name="fecha"
+              id="fecha_consentimiento"
+              class="w-full border rounded p-2"
+              value="{{ today }}"
+              required
+            />
+          </div>
+
+          <!-- PAQUETE -->
+          <div>
+            <label class="block text-sm font-medium mb-1">Paquete</label>
+            <select
+              name="paquete_id"
+              id="paquete_id"
+              class="border rounded p-2 w-full"
+              required
+            >
+              <option value="">Seleccione paquete</option>
+              {% for p in paquetes %}
+              <option value="{{ p.id }}">{{ p.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- LISTA DE CONSENTIMIENTOS -->
+        <div class="mt-6">
+          <h4 class="font-semibold mb-2">Consentimientos disponibles</h4>
+          <div
+            id="listaConsentimientos"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <p class="text-gray-500">Seleccione un paquete…</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </form>
 
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='js/consentimientos.js') }}"></script>
+    {% endblock %} {% endblock %}
   </div>
-
-</form>
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/consentimientos.js') }}"></script>
-{% endblock %}
-
-{% endblock %}
+</div>
