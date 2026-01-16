@@ -27,27 +27,58 @@
 
     <!-- Buscador -->
     <div class="relative max-w-lg">
-      <input
-        id="buscarInput"
-        type="text"
-        placeholder="Escriba nombre o cédula del paciente..."
-        class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <a
-        href="/formulario"
-        class="bg-neutral-primary-soft block border border-default rounded-base shadow-xs transition hover:bg-gray-200"
-      ></a>
+      <!-- Contenedor horizontal -->
+      <div class="flex gap-2 items-center mb-4">
+        <!-- Buscador -->
+        <input
+          id="buscarInput"
+          type="text"
+          placeholder="Escriba nombre o cédula del paciente..."
+          class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <!-- Botón agregar -->
+        <a
+          href="/pacientes/agregar"
+          class="bg-blue-600 text-white px-4 py-2 rounded whitespace-nowrap"
+        >
+          <i class="fa-solid fa-plus"></i> Agregar Paciente
+        </a>
+      </div>
+
       <!-- Resultados dinámicos -->
       <div
         id="resultados"
         class="absolute bg-white border rounded-lg mt-1 w-full shadow hidden z-10"
       ></div>
     </div>
+    <!-- <div class="relative max-w-lg">
+      <a
+        href="/pacientes/agregar"
+        class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block"
+      >
+        + Agregar Pacientes
+      </a>
+      <input
+        id="buscarInput"
+        type="text"
+        placeholder="Escriba nombre o cédula del paciente..."
+        class="border rounded-lg w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      
+      <a
+        href="/formulario"
+        class="bg-neutral-primary-soft block border border-default rounded-base shadow-xs transition hover:bg-gray-200"
+      ></a>
+      
+      <div
+        id="resultados"
+        class="absolute bg-white border rounded-lg mt-1 w-full shadow hidden z-10"
+      ></div>
+    </div> -->
 
     <!-- Botón de prueba manual -->
     <div class="mt-6">
-      
-
       <div
         id="bloquePaciente"
         class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"

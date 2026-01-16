@@ -1,22 +1,38 @@
 {% extends "base.html" %}
-
 {% block contenido %}
+
 <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
-  <h1 class="text-2xl font-semibold mb-4">
-    Vista previa del consentimiento
-  </h1>
+  <h1 class="text-2xl font-semibold mb-4">Vista previa del consentimiento</h1>
 
   <pre class="whitespace-pre-wrap text-gray-800 text-sm">
 {{ contenido }}
   </pre>
 
-  <div class="mt-6">
-    <a
-      href="/consentimientos"
-      class="bg-gray-600 text-white px-4 py-2 rounded"
-    >
+  <div class="mt-6 flex gap-3">
+
+    <!-- FORMULARIO REAL -->
+    <form method="POST" action="/consentimientos/pdf/{{ plantilla.id }}">
+      
+      <!-- reenviamos datos importantes -->
+      <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+      <input type="hidden" name="doctor_id" value="{{ doctor.id if doctor }}">
+      <input type="hidden" name="enfermero_id" value="{{ enfermero.id if enfermero }}">
+      <input type="hidden" name="fecha" value="{{ fecha }}">
+      <input type="hidden" name="contenido" value="{{ contenido|e }}">
+
+      <button
+        type="submit"
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Generar PDF
+      </button>
+    </form>
+
+    <a href="/consentimientos" class="bg-gray-600 text-white px-4 py-2 rounded">
       Volver
     </a>
+
   </div>
 </div>
+
 {% endblock %}

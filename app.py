@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify,session, abort, make_response, flash
-import sqlite3
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
 from docxtpl import DocxTemplate
-import pandas as pd
-import os
 from datetime import datetime
 from database import get_db
 import json
 import base64
+import subprocess
+import pandas as pd
+import os
+import sqlite3
+import tempfile
 import subprocess
 
 
@@ -642,63 +644,63 @@ def api_buscar_paciente():
 #         ]
 #     }
 
-@app.route("/consentimientos/generar_pdf")
-def generar_consentimiento_pdf():
-    if "usuario" not in session:
-        return redirect("/login")
+# @app.route("/consentimientos/generar_pdf")
+# def generar_consentimiento_pdf():
+#     if "usuario" not in session:
+#         return redirect("/login")
 
-    plantilla_id = request.args.get("plantilla_id")
-    paciente_id = request.args.get("paciente_id")
-    doctor_id = request.args.get("doctor_id")
-    enfermero_id = request.args.get("enfermero_id")
-    fecha = request.args.get("fecha")
+#     plantilla_id = request.args.get("plantilla_id")
+#     paciente_id = request.args.get("paciente_id")
+#     doctor_id = request.args.get("doctor_id")
+#     enfermero_id = request.args.get("enfermero_id")
+#     fecha = request.args.get("fecha")
 
-    if not fecha:
-        fecha = datetime.now().strftime("%Y-%m-%d")
+#     if not fecha:
+#         fecha = datetime.now().strftime("%Y-%m-%d")
 
-    db = get_db()
+#     db = get_db()
 
-    plantilla = db.execute("""
-        SELECT * FROM plantillas_consentimiento WHERE id=?
-    """, (plantilla_id,)).fetchone()
+#     plantilla = db.execute("""
+#         SELECT * FROM plantillas_consentimiento WHERE id=?
+#     """, (plantilla_id,)).fetchone()
 
-    paciente = db.execute("""
-        SELECT * FROM pacientes WHERE id=?
-    """, (paciente_id,)).fetchone()
+#     paciente = db.execute("""
+#         SELECT * FROM pacientes WHERE id=?
+#     """, (paciente_id,)).fetchone()
 
-    doctor = db.execute("""
-        SELECT * FROM personal WHERE id=?
-    """, (doctor_id,)).fetchone() if doctor_id else None
+#     doctor = db.execute("""
+#         SELECT * FROM personal WHERE id=?
+#     """, (doctor_id,)).fetchone() if doctor_id else None
 
-    enfermero = db.execute("""
-        SELECT * FROM personal WHERE id=?
-    """, (enfermero_id,)).fetchone() if enfermero_id else None
+#     enfermero = db.execute("""
+#         SELECT * FROM personal WHERE id=?
+#     """, (enfermero_id,)).fetchone() if enfermero_id else None
 
-    sede = db.execute("""
-        SELECT * FROM sedes WHERE id=?
-    """, (session["sede_id"],)).fetchone()
+#     sede = db.execute("""
+#         SELECT * FROM sedes WHERE id=?
+#     """, (session["sede_id"],)).fetchone()
 
-    db.close()
+#     db.close()
 
-    html = render_template(
-        "consentimientos/pdf.html",
-        plantilla=plantilla,
-        paciente=paciente,
-        doctor=doctor,
-        enfermero=enfermero,
-        sede=sede,
-        fecha=fecha
-    )
+#     html = render_template(
+#         "consentimientos/pdf.html",
+#         plantilla=plantilla,
+#         paciente=paciente,
+#         doctor=doctor,
+#         enfermero=enfermero,
+#         sede=sede,
+#         fecha=fecha
+#     )
 
-    pdf = HTML(string=html).write_pdf()
+#     pdf = HTML(string=html).write_pdf()
 
-    response = make_response(pdf)
-    response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = (
-        f"attachment; filename=Consentimiento_{paciente['nombre']}.pdf"
-    )
+#     response = make_response(pdf)
+#     response.headers["Content-Type"] = "application/pdf"
+#     response.headers["Content-Disposition"] = (
+#         f"attachment; filename=Consentimiento_{paciente['nombre']}.pdf"
+#     )
 
-    return response
+#     return response
 #MENOR DE EDAD 
 
 @app.route("/menores")
@@ -1328,8 +1330,81 @@ def generar_consentimiento_prueba(plantilla_id):
 
     return render_template(
         "consentimientos/preview.html",
-        contenido=contenido
+        contenido=contenido,
+        plantilla=plantilla
+        
     )
+def convertir_html_a_pdf(html_path, output_dir):
+    soffice_path = "soffice"  # ya está en tu PATH
+
+    subprocess.run([
+        soffice_path,
+        "--headless",
+        "--convert-to", "pdf",
+        "--outdir", output_dir,
+        html_path
+    ], check=True)    
+
+@app.route("/consentimientos/pdf/<int:plantilla_id>", methods=["POST"])
+def generar_consentimiento_pdf(plantilla_id):
+    print("🚀 ENTRÉ A GENERAR PDF")
+    if "usuario" not in session:
+        return redirect("/login")
+
+    db = get_db()
+
+    # -------- DATOS FORMULARIO --------
+    paciente_id = request.form.get("paciente_id")
+    doctor_id = request.form.get("doctor_id")
+    enfermero_id = request.form.get("enfermero_id")
+    fecha = request.form.get("fecha_consentimiento")
+
+    # -------- CONSULTAS --------
+    paciente = db.execute(
+        "SELECT * FROM pacientes WHERE id=?", (paciente_id,)
+    ).fetchone()
+
+    doctor = db.execute(
+        "SELECT * FROM personal WHERE id=?", (doctor_id,)
+    ).fetchone() if doctor_id else None
+
+    enfermero = db.execute(
+        "SELECT * FROM personal WHERE id=?", (enfermero_id,)
+    ).fetchone() if enfermero_id else None
+
+    plantilla = db.execute(
+        "SELECT * FROM plantillas_consentimiento WHERE id=?",
+        (plantilla_id,)
+    ).fetchone()
+
+    db.close()
+
+    # -------- CONTENIDO --------
+    contenido = plantilla["contenido"]
+
+    variables = {
+        "{{PACIENTE_NOMBRE}}": paciente["nombre"],
+        "{{PACIENTE_CEDULA}}": paciente["cedula"],
+        "{{DOCTOR}}": doctor["nombre"] if doctor else "",
+        "{{ENFERMERO}}": enfermero["nombre"] if enfermero else "",
+        "{{FECHA}}": fecha,
+    }
+
+    for k, v in variables.items():
+        contenido = contenido.replace(k, v or "")
+
+    # -------- RENDER PDF --------
+    html = render_template(
+        "consentimientos/pdf.html",
+        contenido=contenido,
+        paciente=paciente,
+        doctor=doctor,
+        enfermero=enfermero,
+        fecha=fecha,
+        plantilla=plantilla
+    )
+
+    return html  
 
 
 
